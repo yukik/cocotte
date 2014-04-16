@@ -1,0 +1,117 @@
+<p>
+	cocotteのプレゼンテーション層から直接モデルを使用する事はありませんが、
+	スクリプトの中でモデルを使用する事はあります。<br />
+	その方法をこの項で説明します。<br />
+	modelsに設定したファイルを元にモデルは作成され、メモリ上に常駐しています。<br />
+	常駐しているモデルを取得するにはModelモジュールのgetメソッドを使用します。<br />
+	下記は、使用方法の項のafterAddの説明に使用された例です。<br />
+	Modelモジュールはrequireを使用し、操作したいモデルをgetにて取得する事が出来ます<br />
+	getの引数は設定時に決定したモデル名です。<br />
+	モデルの操作はメソッドを確認してください
+</p>
+
+<pre class='code'>
+var Model     = require('cocotte/model')
+  , RoomModel = Model.get('room');
+model.afterAdd = function afterAdd (rowno, data, user, callback) {
+    RoomModel.findOne({name: data.room}, function (err, result) {
+        var room;
+        if (result) {
+            room = {student: result.student + 1};
+            RoomModel.update(result.rowno, room, user, callback);
+        } else {
+            room = {name: data.room, student: 1};
+            RoomModel.add(room, user, callback);
+        }
+    });
+};</pre>
+
+<h3>メソッド</h3>
+
+<dl class="description">
+	<dt>get</dt>
+	<dd>
+		取得（主フィールド）<br />
+		get(可変引数)<br />
+		@param {String|Number|Date} 主フィールド１番目の値<br />
+		@param {String|Number|Date} 主フィールド２番目の値<br />
+		@param {Function} callback ({Error} err, {Object} result)<br />
+		@return メソッドチェーン<br />
+		<br />
+		主フィールドが設定されている場合に限り利用する事が出来ます<br />
+		最後の引数がcallbackに設定されます
+		例えば、先の例でのRoomModelでnameフィールドを主フィールドに設定している場合は
+		次のように記述する事が出来ます。
+<pre class='code'>
+var Model     = require('cocotte/model')
+  , RoomModel = Model.get('room');
+model.afterAdd = function afterAdd (rowno, data, user, callback) {
+    RoomModel.get(data.room, function (err, result) {
+        // (中略)
+    });
+};</pre>
+
+	</dd>
+
+	<dt>findOne</dt>
+	<dd>
+		取得（最初の１件）<br />
+		findOne (conditions, fields, options, callback)<br />
+		@param {Object}   conditions (省略可能)<br />
+		@param {Object}   fields (省略可能)<br />
+		@param {Object}   options (省略可能)<br />
+		@param {Function} callbak callback ({String} err, {Object} result)<br />
+		@return メソッドチェーン
+	</dd>
+
+	<dt>find</dt>
+	<dd>
+		複数行の取得<br />
+		find (conditions, fields, options, callback)<br />
+		@param {Object}   condition (省略可能)<br />
+		@param {Object}   fields (省略可能)<br />
+		@param {Object}   options (省略可能)<br />
+		@param {Function} callback ({String} err, {Array} results)<br />
+		@return メソッドチェーン
+	</dd>
+
+	<dt>add</dt>
+	<dd>
+		行の追加<br />
+		add (data, user, callback)<br />
+		@param {Object}   data<br />
+		@param {Object}   user (省略可能)<br />
+		@param {Function} callback ({Error} err, {Object} name/rowno/data/user) (省略可能)<br />
+		@return メソッドチェーン
+	</dd>
+
+	<dt>update</dt>
+	<dd>
+		行の更新<br />
+		update  (rowno, data, user, callback)<br />
+		@param {Number}   rowno<br />
+		@param {Object}   data<br />
+		@param {Object}   user (省略可能)<br />
+		@param {Function} callback ({Error} err, {Object} name/rowno/data/user) (省略可能)<br />
+		@return メソッドチェーン
+	</dd>
+
+	<dt>remove</dt>
+	<dd>
+		指定行の削除<br />
+		remove (rowno, data, user, callback)<br />
+		@param {Number}   rowno<br />
+		@param {Object}   data (省略可能)<br />
+		@param {Object}   user (省略可能)<br />
+		@param {Function} callback ({Object} err , {Object} name/rownno/data/user) (省略可能)<br />
+		@return メソッドチェーン
+	</dd>
+
+	<dt>drop</dt>
+	<dd>
+		テーブルの削除<br />
+		drop (callback)<br />
+		@param  {Function} callback ({Error} err) (省略可能)<br />
+		@return メソッドチェーン
+	</dd>
+</dl>

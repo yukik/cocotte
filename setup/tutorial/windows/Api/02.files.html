@@ -1,0 +1,42 @@
+<p>
+	cocotteのファイル構成を説明します。<br />
+</p>
+
+<pre class='code'>
+applicationRoot: <span class='folder'>アプリケーションのルートフォルダ</span>
+ |
+ +--<a data-winname='ApiDatabase'>databases</a>: <span class='folder'>データベース接続構成<span>
+ |
+ +--<a data-winname='ApiDatasource'>datasources</a>: <span class='folder'>データソース</span>
+ |
+ +--<a data-winname='ApiDiagram'>diagram</a>: <span class='folder'>ダイアグラム</span>
+ |
+ +--<a data-winname='ApiFx'>fx</a>: <span class='folder'>共通関数定義</span>
+ |
+ +--logs: <span class='folder'>ログファイル</span>
+ |
+ +--<a data-winname='ApiModel'>models</a>: <span class='folder'>モデル</span>
+ |
+ +--node_modules: <span class='folder'>node.jsモジュール</span>
+ |
+ +--<a data-winname='ApiPortlet'>portlets</a>: <span class='folder'>ポートレット</span>
+ |
+ +--public: <span class='folder'>Expressでの公開フォルダ</span>
+ |
+ +--views: <span class='folder'>ビュー</span>
+ |
+ +--<a data-winname='ApiWindow'>windows</a>: <span class='folder'>ウインドウ</span>
+ |
+ +--<a data-winname='ApiWorkspace'>workspaces</a>: <span class='folder'>ワークスペース</span>
+ |
+ +--app.js: <span class='file'>エントリーポイント</span>
+ |
+ +--config.js: <span class='file'>設定ファイル</span>
+</pre>
+
+<p>
+	cocotteでは、ルートフォルダ直下に各オブジェクトの種類毎にフォルダが作成されているため
+	直感的に管理の容易な構成になっています。<br />
+	設定を一番最初に行うべきファイルはconfig.jsですが、このAPIを確認出来る時点で既に設定が終わっているとして
+	説明を割愛します。
+</p>

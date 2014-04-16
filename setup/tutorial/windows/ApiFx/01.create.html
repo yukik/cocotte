@@ -1,0 +1,55 @@
+<p>
+	
+	fxフォルダ内に関数名と同名のファイルを作成してください。<br />
+	例でのファイル名はhiragana.jsとし、カタカナをひらがなに変更する関数です
+</p>
+
+<pre class='code'>
+var fx = function hiragana (val) {
+    if (!is(String, val)) {
+        throw new Error('文字列を渡してください');
+    }
+    return val.replace(/[ァ-ヶ]/g, function (c) {
+        return String.fromCharCode(c.charCodeAt(0) - 0x0060);
+    });
+};
+module.exports = exports = fx;</pre>
+
+
+<h3>使用方法</h3>
+
+<p>
+	関数を取得するにはツール関数のgetFxを使用します
+	<pre class='code'>
+var getFx    = require('cocotte/tools/getFx')
+  , hiragana = getFx('hiragana');
+var val = hiragana('アイウエオ');</pre>
+	valの値は'あいうえお'になります。<br />
+	使用する関数が一つだけの場合は
+	<pre class='code'>
+var hiragana = require('cocotte/tools/getFx')('hiragana');
+var val = hiragana('アイウエオ');</pre>
+	としても同じ結果になります
+</p>
+
+
+<h3>プロパティ</h3>
+
+<dl class='description'>
+	<dt>category</dt>
+	<dd>
+		関数のカテゴリー
+	</dd>
+
+	<dt>description</dt>
+	<dd>
+		関数の機能説明や使用方法を示します
+	</dd>
+
+	<dt>fx</dt>
+	<dd>
+		関数本体を記述します。<br />
+		必ず戻り値で結果を返すように作成してください。callback関数を引数にしてはいけません。<br />
+		エラーは適切に処理してください。
+	</dd>
+</dl>

@@ -1,0 +1,333 @@
+<p>
+	データソースは行の追加・クリア、現在行の移動を行う事ができます。<br />
+
+
+</p>
+
+<h3>プロパティ</h3>
+<dl class="description">
+	<dt>model</dt>
+	<dd>
+		モデル<br />
+		@type {Model}<br />
+		モデルが設定されている場合は、フィールドの自動設定・データの永続化などの機能を持ちます。<br />
+		load/saveメソッドが使用可能になります
+	</dd>
+
+	<dt>page</dt>
+	<dd>
+		loadでの読み込みページ<br />
+		@type {Number}
+	</dd>
+
+	<dt>limit</dt>
+	<dd>
+		一度のloadで読み込まれる行数<br />
+		@type {Number}
+	</dd>
+
+
+	<dt>sort</dt>
+	<dd>
+		並び順<br />
+		@type {Array}
+	</dd>
+
+	<dt>rows</dt>
+	<dd>
+		全行<br />
+		@type {Array}<br />
+	</dd>
+
+</dl>
+
+<dl class="description">
+	<dt>currentRow</dt>
+	<dd>
+		現在行を返す<br />
+		@return {Row}
+	</dd>
+
+	<dt>getRowCount</dt>
+	<dd>
+		全行数を返す<br />
+		@return {Number}
+	</dd>
+
+	<dt>addRow</dt>
+	<dd>
+		
+	</dd>
+</dl>
+
+
+
+/**
+ * 行の追加
+ * @return {Row}
+ */
+Datasource.prototype.addRow = function addRow () {
+	var fields = this.fields
+	  , row = new Row(this);
+	this.rows.push(row);
+	this.indexes.push(row.rowno.get());
+	return row;
+};
+
+/**
+ * 全行のクリア
+ * 行をdatasourceから除外するだけでdatastoreには影響を与えません
+ */
+Datasource.prototype.clear = function () {
+	this.rows.forEach(function (row) {
+		row.clear(true);
+	});
+	this.indexes = [];
+	this.rows = [];
+	this.currentIndex = -1;
+};
+
+/**
+ * 現在行の取得
+ * @return {Row} row
+ */
+Datasource.prototype.getCurrentRow = function () {
+	if (this.rows.length > 0) {
+		return this.rows[this.currentIndex];
+	} else {
+		return null;
+	}
+};
+
+/**
+ * 現在行を指定の行番号の行にします
+ * 指定するのは行番号です。インデックスではありません
+ * @param {Number} rowNo 行番号
+ * @return {Row} 指定行が存在する場合にのみ行を返します
+ */
+Datasource.prototype.moveRowNo = function moveRowNo (rowNo) {
+	var oldNo  = this.currentRowNo
+	  , newIdx = this.indexes.indexOf(rowNo);
+	if (newIdx === -1) {
+		return null;
+	}
+	this.currentIndex = newIdx;
+	if (oldNo !== rowNo) {
+		this.currentRowNo = rowNo;
+		this.emit('moved', rowNo);
+	}
+	return this.rows[newIdx];
+	
+};
+
+/**
+ * 現在行を指定行にする
+ * 指定するのはインデックスです。行番号ではありません。
+ * @param  {Number} index
+ * @return {Row} 指定行が存在する場合のみ行を返します
+ */
+Datasource.prototype.moveIndex = function moveIndex (index) {
+	var rowNo = this.indexes[index];
+	if (rowNo) {
+		this.currentIndex = index;
+		this.currentRowNo = rowNo;
+		this.emit('moved', rowNo);
+		return this.rows[index];
+	} else {
+		return null;
+	}
+};
+
+/**
+ * 現在行を先頭行にします
+ * @return {Row} 先頭行を返します
+ */
+Datasource.prototype.first = function first () {
+	if (this.currentIndex === 0) {
+		return this.rows[0];
+	}
+	var rowNo = this.indexes[0];
+	if (rowNo) {
+		this.currentIndex = 0;
+		this.currentRowNo = rowNo;
+		this.emit('moved', rowNo);
+		return this.rows[0];
+	} else {
+		return null;
+	}
+};
+
+/**
+ * 現在行を前行にする
+ * 現在行が設定されていない場合は最終行に設定されます
+ * @return {Row} 成功した場合にのみ行を返します
+ */
+Datasource.prototype.back = function back () {
+	if (this.currentIndex === null) {
+		return this.last();
+	} else if (this.currentIndex === 0) {
+		return null;
+	} 
+	var rowNo = this.indexes[this.currentIndex - 1];
+	this.currentIndex = 0;
+	this.currentRowNo = rowNo;
+	this.emit('moved', rowNo);
+	return this.rows[index];
+};
+
+/**
+ * 現在行を次行にする
+ * @return {Row} 成功した場合にのみ行を返します
+ */
+Datasource.prototype.next = function next () {
+	if (this.currentIndex === null) {
+		return null;
+	}
+	if (this.currentIndex < this.indexes.length - 1) {
+		var index = this.currentIndex + 1
+		  , rowNo = this.indexes[index];
+		this.currentIndex = index;
+		this.currentRowNo = rowNo;
+		this.emit('moved', rowNo);
+		return this.rows[index];
+	} else {
+		return null;
+	}
+};
+
+/**
+ * 現在行を最終行にします
+ * @return {Row} 成功した場合にのみ行を返します
+ */
+Datasource.prototype.last = function last () {
+	var idx = this.indexes.length - 1;
+	if (this.currentIndex < this.indexes.length - 1) {
+		var index = this.currentIndex + 1
+		  , rowNo = this.indexes[index];
+		this.currentIndex = index;
+		this.currentRowNo = rowNo;
+		this.emit('moved', rowNo);
+		return this.rows[index];
+	} else {
+		return null;
+	}
+};
+
+/**
+ * 現在行を未設定にします
+ */
+Datasource.prototype.unsetCurrentRow = function unsetCurrentRow () {
+	if (this.currentIndex !== null) {
+		this.currentIndex = null;
+		this.currentRowNo = null;
+		this.emit('moved', null);
+	}
+};
+
+/**
+ * modelからデータを読み込む
+ */
+Datasource.prototype.load = function load (callback) {
+	var self = this;
+	if (self.model) {
+		var fields     = Object.keys(self.fields)
+		  , conditions = {}
+		  , options = {limit: self.limit};
+		if (self.page > 1) {
+			options.skip = self.limit * (self.page - 1);
+		}
+		//表示順
+		if (self.sort.length > 0) {
+			options.sort = self.sort;
+		}
+		//条件
+		fields.forEach(function(fieldName) {
+			var field  = self.fields[fieldName]
+			  , filter = field.getFilter();
+			if (filter !== null) {
+				conditions[field.name] = filter;
+			}
+		});
+		//読み込み
+		self.model.find(conditions, fields, options, function (err, rows) {
+			rows.forEach(function (data) {
+				var row = new Row(self, ROW_STATE.original, data);
+				self.rows.push(row);
+				self.indexes.push(row.rowno.get());
+			});
+			if (callback) {
+				callback(null);
+			}
+		});
+	} else {
+		if (callback) {
+			callback(new Error('モデルが設定されていないため、データの読み込みができません'));
+		}
+	}
+};
+
+/**
+ * 保存する
+ * 保存時にエラーが発生した場合はErrorオブジェクトが配列で返されます
+ * @param  {Object}   auth
+ * @param  {Function} callback ([Error] errs);
+ * @return メソッドチェーン
+ */
+Datasource.prototype.save = function save(auth, callback){
+	var errs    = []
+	  , allCnt  = this.getRowCount()
+	  , doneCnt = 0;
+
+	todoMsg('検証');
+	/**
+	 * 検証
+	 *
+	this.rows.forEach(function(row) {
+		row.valid(function (e) {
+			if (e) {
+				errs.concat(e);
+			}
+			if (allCnt === ++doneCnt && errs.length > 0 && is(Function, callback)) {
+				callback(errs);
+			}
+
+		})
+	});
+	*/
+
+	/**
+	 * 保存
+	 */
+	if (errs.length === 0) {
+		doneCnt = 0;
+		this.rows.forEach(function(row) {
+			row.save(auth, function(e) {
+				if (e && e.length) {
+					errs.concat(e)
+				}
+				if (allCnt === ++doneCnt && is(Function, callback)) {
+					callback(errs);
+				}
+			});
+		});
+	};
+
+	return this;
+};
+
+/**
+ * すべての行を値にして配列で返す
+ * @return {Array}
+ */
+Datasource.prototype.toData = function toData () {
+	var rtn = [];
+	this.rows.forEach(function (row) {
+		if (row.state !== ROW_STATE.removed) {
+			rtn.push(row.toData());
+		}
+	});
+	return rtn;
+};
+
+
+module.exports = exports = Datasource;

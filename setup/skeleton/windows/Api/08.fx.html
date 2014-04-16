@@ -1,0 +1,35 @@
+<h3>関数とは</h3>
+<p>
+	cocotteでの関数とは、ユーザーが自由に定義出来るデータ変換のヘルパーです。<br />
+	<br />
+	ここでは概要だけを説明します。より詳しい内容は<a data-winname='ApiFx'>Function API</a>を確認してください。<br />
+	<br />
+	関数はアプリケーション全体で使用する事が出来ます。
+</p>
+
+<h3>作成方法</h3>
+<p>
+	fxフォルダ内に関数名と同名のファイルを作成してください。<br />
+	例でのファイル名はhiragana.jsとし、カタカナをひらがなに変更する関数を定義します
+<pre class='code'>
+var fx = function hiragana (val) {
+    if (!is(String, val)) {
+        throw new Error('文字列を渡してください');
+    }
+    return val.replace(/[ァ-ヶ]/g, function (c) {
+        return String.fromCharCode(c.charCodeAt(0) - 0x0060);
+    });
+};
+module.exports = exports = fx;</pre>
+</p>
+
+<h3>使用方法</h3>
+<p>
+	関数を取得するにはツール関数のgetFxを使用します
+	<pre class='code'>
+var getFx    = require('cocotte/tools/getFx')
+  , hiragana = getFx('hiragana');
+var val = hiragana('アイウエオ');</pre>
+	valの値は'あいうえお'になります。<br />
+</p>
+

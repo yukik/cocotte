@@ -1,0 +1,74 @@
+<p>
+	データソースはイベントを発行します。<br />
+	<pre class='code'>
+var ds = new Datasource(schema);
+ds.on('add', function (row) {
+    console.log('event - add');
+});</pre>
+	リスナーの登録・解除は、node.jsのeventEmitterに準拠します。<br />
+	発行されるイベントは、次の通りです。
+</p>
+
+<dl class="description">
+	<dt>add</dt>
+	<dd>
+		listener ({Row} row) <br />
+		行が追加された
+	</dd>
+
+	<dt>remove</dt>
+	<dd>
+		listener ({Row} row) <br />
+		行が削除された
+	</dd>
+
+	<dt>clear</dt>
+	<dd>
+		listener ({Datasource} ds)<br />
+		行がクリアされた
+	</dd>
+
+	<dt>move</dt>
+	<dd>
+		listener ({Datasource} ds) <br />
+		現在行が移動された
+	</dd>
+
+	<dt>change</dt>
+	<dd>
+		listener ({Row} row) <br />
+		いずれかの値が更新された
+	</dd>
+
+	<dt>change {fieldName}</dt>
+	<dd>
+		listener ({Row} row, {Mixed} value) <br />
+		指定フィールドの値が更新された
+	</dd>
+
+	<dt>currentChange</dt>
+	<dd>
+		listener ({Row} row) <br />
+		現在行の値が変更されたもしくは現在行が移動したことによって値が変更になった
+	</dd>
+
+	<dt>currentChange {fieldName}</dt>
+	<dd>
+		listener ({Row} row, {Mixed} value) <br />
+		現在行の指定フィールドの値が変更されたもしくは現在行が移動する事によって指定のフィールドの値が変更になった
+	</dd>
+
+	<dt>set default</dt>
+	<dd>
+		listener ({Field} field) <br />
+		フィールドの既定値が変更された
+	</dd>
+
+	<dt>set filter</dt>
+	<dd>
+		listener ({Field} field) <br />
+		フィールドの条件が変更になった
+	</dd>
+
+</dl>
+

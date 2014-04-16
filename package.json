@@ -1,19 +1,32 @@
 {
   "name": "cocotte",
-  "description": "Business generation web application framework",
-  "homepage": "https://github.com/yukik",
+  "description": "アプリケーション作成",
+  "homepage": "https://github.com/yukik/cocotte",
   "keywords": [
-    "cocotte",
-    "framework"
+    "cocotte"
   ],
   "author": "Yuki Kurata <yuki.kurata@gmail.com>",
-  "dependencies": {},
+  "dependencies": {
+    "moment": "*",
+    "koa": "*",
+    "koa-common": "*",
+    "koa-static": "*",
+    "koa-sess": "*",
+    "koa-redis": "*",
+    "koa-route": "*",
+    "koa-send": "*",
+    "co-body": "*",
+    "co-views": "*",
+    "cocotte-device": "*",
+    "cocotte-auth": "*",
+    "socket.io": "*"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/yukik/cocotte.git"
   },
-  "main": "index.js",
-  "version": "0.0.0",
+  "main": "cocotte.js",
+  "version": "0.1.0",
   "scripts": {
     "test": "node ./test/test.js"
   },

@@ -1,0 +1,20 @@
+<h3>数値</h3>
+<pre>
+整数・浮動小数点付き数字を取り扱う
+
+schema (共通)
+	fieldType: {String}  データ型      固定値: 'number'    protoにて設定
+	name     : {String}  システム名    既定値: 'number'    protoにて設定
+	caption  : {String}  表示名        既定値: 'number'    protoにて設定
+	primary  : {Boolean} 主フィールド  既定値: false       protoにて設定
+	autoTo   : {Function}自動設定      既定値: null        protoにて設定
+	readonly : {Boolean} 読取専用      既定値: false       protoにて設定
+	required : {Boolean} 必須          既定値: false       protoにて設定
+	defaultTo: {Number}  既定値        既定値: null        protoにて設定
+	filterTo : {Number}  条件          既定値: null        protoにて設定
+
+schema (個別)
+	min      : {Number}  最小値        既定値:-2147483648
+	max      : {Number}  最大値        既定値: 2147483647
+	precision: {Number}  小数点桁      既定値: 0           最大20桁
+</pre>

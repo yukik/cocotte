@@ -1,0 +1,81 @@
+<p>
+	データベースへの永続化の処理を担当します<br />
+	設定ファイルは接続情報を保有します。<br />
+	作成するにはdatabasesフォルダに接続名と同名のファイルを作成してください。<br />
+	default.jsのみ必ず作成する必要があります。<br />
+	default.jsに設定された接続情報は、アプリケーションの構築情報やセッション情報の格納、データベースの指定のないモデルの接続先に設定されます。<br />
+</p>
+
+
+<h3>作成方法</h3>
+<p>
+	初期設定で唯一作成されているdefault.jsを以下に記述します
+</p>
+<pre class='code'>
+var db = {
+    driver  : 'mongodb'
+  , host    : '127.0.0.1'
+  , port    : 27017
+  , db      : 'cocotte'
+  , readonly: false
+  , file: {
+        type  : 'file'
+      , path  : 'files'
+      , subdir: 'daily'
+    }
+};
+module.exports = exports = db;</pre>
+
+<h3>プロパティ</h3>
+<p>
+	上記のファイルに記載されている設定を解説します
+</p>
+<dl class='description'>
+	<dt>driver</dt>
+	<dd>
+		ドライバ。現在対応しているデータベースはMongoDBのみのため、mongodb固定です
+	</dd>
+
+	<dt>host</dt>
+	<dd>
+		接続先
+	</dd>
+	
+	<dt>port</dt>
+	<dd>
+		ポート番号
+	</dd>
+
+	<dt>db</dt>
+	<dd>
+		データベース
+	</dd>
+
+	<dt>readonly</dt>
+	<dd>
+		データの取得のみ許可されている場合はtrueにします。
+		default.jsでは必ずfalseに設定してください。
+		書込みの出来ないデータベースはdefault.jsに設定出来ません。
+	</dd>
+
+	<dt>file.type</dt>
+	<dd>
+		ファイルを保存する際にどのように保存するかを設定します。
+		現在は物理保存のみに対応していますので、file固定です。
+	</dd>
+
+	<dt>file.path</dt>
+	<dd>
+		物理保存されるファイルをどのディレクトリに設定するか。
+		アプリケーションルートのフォルダからの相対パスです。
+	</dd>
+
+	<dt>file.subdir</dt>
+	<dd>
+		サブディレクトリを作成する場合の設定です。
+		項目なしもしくはnullを設定するとサブディレクトリは作成されません<br />
+		現在はdailyのみに対応しています。
+		dailyは日付毎にサブディレクトリが作成されます
+	</dd>
+</dl>
+

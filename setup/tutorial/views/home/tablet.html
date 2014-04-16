@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>{{ title }}</title>
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="/lib/jquery.min.js"></script>
+
+	<!-- ホーム -->
+	<script type="text/javascript" src="/home/home.js"></script>
+
+</head>
+<body>
+	<h1>{{ title }}</h1>
+	<dl>
+		<dt>所属</dt>
+		<dd><input type='text' id='group' name='group' value="group1" /></dd>
+
+		<dt>ユーザー</dt>
+		<dd><input type='text' id='user' name='user' value="admin" /></dd>
+
+		<dt>パスワード</dt>
+		<dd><input type='password' id='password' name='password' value="admin" /></dd>
+
+		<dt></dt>
+		<dd><a href='javascript:home.login()'>ログイン</a></dd>
+
+		<dt></dt>
+		<dd><label id='message'></label></dd>
+	</dl>
+	<ul class="description">
+		{% for l in description %}
+		  <li>{{ l }}</li>
+		{% endfor %}
+	</ul>
+</body>
+</html>

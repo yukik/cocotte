@@ -1,0 +1,204 @@
+<h3>ツール関数</h3>
+<p>
+	cocotteのプラットフォームはサーバサイド<a href='http://nodejs.org/'>node.js</a>で、クライアントサイドjavascriptです。
+	そのため各々のリファレンスを確認して自由に、開発を行う事が出来ます。<br />
+	ただ同じような処理を何度も記述せずに済むように
+	開発をサポートする為に予め定義されたツール関数が存在します。<br />
+	ここではそれらの説明をします。
+</p>
+
+<p>
+	ツール関数isを使用する方法の例を次で示します。<br />
+	<br />
+	サーバサイド<br />
+	var is = require('cocotte/tools/is');<br/>
+	<br />
+	クライアントサイド<br />
+	var is = cocotte.tools.is<br />
+</p>
+
+
+<h3>サーバサイド・クライアントサイド共通</h3>
+<dl class='description'>
+
+	<dt>getType</dt>
+	<dd>
+		型を返します<br />
+		getType (target, simple)<br />
+		@param  {Mixed}   target<br />
+		@param  {Boolean} simple (既定値:false) 省略可能 true時にNumber, Dateの無効値の判定をしません<br />
+		@return {Object}<br />
+		<br />
+		undefined,nullはそのまま値を返します<br />
+		文字列、真偽値はString,Booleanを返します<br />
+		数字はisFinite({Number}) === falseとなるものはそのままの値を返し、それ以外はNumberを返します
+		日付はisNaN({Date}.getTime()) === trueとなるものはNaNを返し、それ以外はDateを返します<br />
+		関数はそのまま参照を返します<br />
+		オブジェクトはconstructorを返します<br /> 
+		<br />
+		(例)
+		<pre class='code'>
+var tp = getType(param1);
+switch(true) {
+case tp === String;
+    // 処理
+    break;
+case tp === Number;
+    // 処理
+    break;
+default
+    break;
+}</pre>
+	</dd>
+
+	<dt>is</dt>
+	<dd>
+		型判定を行います<br />
+		is (type, target, simple)<br />
+		@param  {String}  type<br />
+		@param  {Mixed}   target<br />
+		@param  {Boolean} simple<br />
+		@return {Boolean}<br />
+ 		<br />
+		instanceofと異なりリテラルも判定出来ます<br />
+		ただしプロトタイプチェーンをたどりません<br />
+		<br />
+		既定では以下の値はNumber, Dateと一致しないと判定されますが、simple=true時にNumber, Dateと一致と見なす事もできます<br />
+		NaN, Infinity, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY<br />
+		Date.toString() === 'Invalid Date'となるもの<br />
+		(例)
+		<pre class='code'>
+if (!is(String, param1)) {
+    throw new Error('文字列ではありません');
+}</pre>
+	</dd>
+
+	<dt>matches</dt>
+	<dd>
+		すべての型が一致するかの判定を行います<br />
+		matches (types, target, options)<br />
+		@param  {Array}   types<br />
+		@param  {Array}   target<br />
+		@param  {Object}  options 省略可能<br />
+						optionsにBooleanを指定した場合はsimpleを設定、配列を指定した場合はmustを指定したと処理します<br />
+		                simple: {Boolean} (既定値:false) true時に有効でない値に対してもNumber, Dateを返します<br />
+		                must  : {Array}   省略出来ないインデックス。設定していない場合はすべて省略不可とします<br />
+		                lengthCheck (既定値:false) targetの長さが一致するかも確認します<br />
+		@return {Boolean}<br />
+		(例)
+		<pre class='code'>
+if (!matches([String, Number], arguments)) {
+    throw new Error('引数が不正です');
+}</pre>
+	</dd>
+
+	<dt>compare</dt>
+	<dd>
+		値が同じかどうかを比較します<br />
+		compare (target1, target2)<br />
+		@param  {Mixed}   target1<br />
+		@param  {Mixed}   target2<br />
+		@return {Boolean}<br />
+		<br />
+		通常は同じ値であるかどうか
+		オブジェクトや日付も値で確認します<br />
+	</dd>
+
+</dl>
+
+
+<h3>サーバサイド</h3>
+<dl class='description'>
+
+	<dt>message</dt>
+	<dd>
+		message (messageTarget, options)<br />
+		@param {Mixed} messageTarget<br />
+		@param {Object} options<br />
+		<br />
+		コンソールにメッセージの出力します<br />
+		<br />
+		次のような機能を持ちます<br />
+			ファイル名と行数も表示します<br />
+			色付きで読みやすく工夫されています<br />
+			メッセージの型に応じて出力形式を変更します<br />
+		<br />
+		オプションで出力をコントロールできます<br />
+		level    : {STring|Number} メッセージの種類(debug, info, warn, error, fatal)
+		title    : {String} タイトルを出力します<br />
+		deep     : {Number} トレースで出力するファイル名・行数の深さ。(規定値:1) 1は直前の呼び出し位置です<br />
+		color    : {String|Number} 値の色の文字列もしくはconsole出力操作の数値。(既定値:black) <br />
+		<br />
+		(例)<br />
+		<pre class='code'>
+cocotte.tools.message('メッセージ表示');
+cocotte.tools.message(1+2+3, '計算');</pre>
+	</dd>
+
+	<dt>logg</dt>
+	<dd>
+		ファイルにログを出力します<br />
+		logg (message, file, options)<br />
+		@param {Mixed} message<br />
+		@param {String} file    (省略可能)<br />
+		@param {Object} options<br />
+		<br />
+		アプリケーションルート/logsのフォルダにログファイルを作成します<br />
+		ファイル名を指定することが可能です。指定しない場合は規定のファイル名(log-{y}-{m}-{d}.txt)です。<br />
+		ファイル名の中の{y},{m},{d},{h}はそれぞれ次のルールで置換されます<br />
+		{y} : 4桁の西暦の年<br />
+		{m} : 2桁の月、0パッティングあり<br />
+		{d} : 2桁の日、0パッティングあり<br />
+		{h} : 2桁の時、0パッティングあり<br />
+		<br />
+		messageにエラーオブジェクトを渡した場合は、詳細なtraceを追加します<br />
+		また既定のファイル名はerror-{y}-{m}-{d}.txtになります<br />
+		<br />
+		options (既定値)<br />
+			datetime (true)      : 日時を記録する<br />
+			info     (undefined) : 追加情報を記録する。形式はJSON<br />
+			linefeed (true)      : messageの最後に改行を追加する<br />
+			trace    (false)     : 書き出したファイルと行を追加<br />
+		<br />
+		(例)<br />
+		<pre class='code'>
+if (!is(String, param1)) {
+    logg(new Error('文字列ではありません'));
+}</pre>
+	</dd>
+</dl>
+
+
+<h3>クライアントサイド</h3>
+
+<dl class='description'>
+	<dt>getWin</dt>
+	<dd>
+		ウインドウオブジェクトを取得<br />
+		通常はウインドウスクリプトを作成した際に、スクリプト内のthisに対して使用します。<br />
+		(例)<br />
+		<pre class='code'>
+script.onClick = function onClick (e) {
+    var win = cocotte.tools.getWin(this);
+    console.log(win.id);
+};</pre>
+	</dd>
+
+	<dt>getPortlet</dt>
+	<dd>
+		ポートレットオブジェクトを取得<br />
+		通常はポートレットを作成した際に、イベントのスクリプト内のthisに対して使用します。<br />
+		(例)<br />
+		<pre class='code'>
+script.onClick = function onClick (e) {
+    var portlet = cocotte.tools.getPortlet(this);
+    console.log(portlet.name);
+};</pre>
+	</dd>
+
+	<dt>msg</dt>
+	<dd>
+		console.logのエイリアスです
+	</dd>
+
+</dl>

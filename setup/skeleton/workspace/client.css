@@ -1,0 +1,299 @@
+html,
+body {
+	height  : 100%;
+	margin  : 0;
+	padding : 0;
+	overflow: hidden;
+}
+
+h3 {
+	margin-top: 20px;
+	margin-bottom: 5px;
+}
+
+#workspace {
+	position: relative;
+	height: 100%;
+	width : 100%;
+	overflow: hidden;
+}
+
+span.alert {
+	color: yellow;
+}
+
+span.error {
+	color: red;
+	background-color: white;
+}
+
+/*
+ * ウインドウ
+ */
+.win {
+	background-color: white;
+	opacity   : 0.95;
+	height    : 100px;
+	width     : 150px;
+	min-height: 100px;
+	min-width : 150px;
+}
+.winMax {
+	top       : 0;
+	left      : 0;
+	min-height: 100%;
+	width     : 100%;
+}
+/*
+ * 既定のデザイン
+ */
+.defaultUI .winContainer{
+	background-color: #2d89ef;
+	position: absolute;
+	top     : 3px;
+	left    : 3px;
+	right   : 3px;
+	bottom  : 3px;
+}
+.winActive .defaultUIContainer {
+	background-color: #2b5797;
+}
+.defaultUIInfo .winContainer {
+	background-color: #f09609;
+}
+.defaultUI .winContents {
+	background-color: #eff4ff;
+	position: absolute;
+	top     : 25px;
+	left    :  3px;
+	right   :  3px;
+	bottom  : 25px;
+	overflow: auto;
+}
+.defaultUI .winTitle {
+	color    : white;
+	font-size: 70%;
+	padding  : 5px 0;
+	position : absolute;
+	height   : 10px;
+	top      : 0px;
+	left     : 10px;
+	right    : 70px;
+	overflow : hidden;
+	white-space: nowrap;
+}
+.defaultUI .winStatus {
+	color    : white;
+	font-size: 70%;
+	padding  : 10px 0;
+	position : absolute;
+	height   : 10px;
+	bottom   : 0;
+	left     : 10px;
+	right    : 70px;
+	overflow : hidden;
+	white-space: nowrap;
+}
+.defaultUI .winHandle {
+	cursor: move; 
+}
+.winMax .winTitle,
+.winMax .winStatus {
+	cursor: auto;
+}
+.defaultUI .tools1 {
+	color   : white;
+	position: absolute;
+	top     : 0px;
+	right   : 3px;
+}
+.defaultUI .tools2 {
+	color   : white;
+	position: absolute;
+	bottom  : 0px;
+	right   : 23px;
+}
+.defaultUI ul.tool1,
+.defaultUI ul.tool2 {
+	list-style-type: none;
+	height: 25px;
+	margin: 0;
+}
+.defaultUI ul.tools1 li,
+.defaultUI ul.tools2 li {
+	display: block;
+	float  : left;
+	width  : 20px;
+	cursor : pointer;
+}
+/**
+ * ドック
+ */
+#dock {
+	position: fixed;
+	background-color: #eff4ff;
+	border  : 1px solid rgba(0, 0, 0, 0.15);
+	opacity : 0.95;
+	margin  : 10px;
+	top     : 0;
+	left    : 0;
+	bottom  : 0;
+	width   : 240px;
+	overflow: auto;
+}
+.winMin {
+	width       : 200px;
+	height      : 15px;
+	margin-top  : 7px;
+	margin-right: auto;
+	margin-left : auto;
+}
+.defaultUI .minContainer{
+	color    : white;
+	font-size: 70%;
+	height   : 15px;
+	width    : 200px;
+	background-color: #2d89ef;
+	border: 2px solid white;
+}
+.winActive .minContainer{
+	background-color: #2b5797;
+}
+.winMinimize .minContainer{
+	color:gray;
+	background-color: transparent;
+	border: 2px dashed #e1e1e1;
+}
+
+.defaultUI .minTitle {
+	float   : left;
+	cursor  : pointer;
+	height  : 15px;
+	width   : 160px;
+	overflow: hidden;
+	padding-left: 10px;
+}
+.defaultUI .minClose {
+	float : right;
+	cursor: pointer;
+	height: 15px;
+	width : 10px;
+}
+
+
+/**
+ * 注意
+ */
+p.attention {
+	background-color: #ffc;
+	border: 1px solid #ff0;
+}
+
+p ol {
+	list-style-type: decimal;
+	list-style-position: inside;
+}
+
+
+/**
+ * タブ表示用
+ */
+ul.tabHeader {
+	list-style-type: none;
+}
+
+ul.tabHeader li {
+	float: left;
+	width: 120px;
+	margin: 2px;
+	background-color: #e3c800;
+	color: white;
+	cursor: pointer;
+	text-align: center;
+}
+
+ul.tabHeader li.tabActive {
+	background-color: #f0a30a;
+	color:black;
+}
+
+ul.tabHeader li.tabInactive:hover {
+	background-color: #f0a30a;
+	color:black;
+}
+
+div.tabContents {
+	padding: 20px;
+	clear: left;
+}
+
+div.tabContents div.tabInactive {
+	display: none;
+}
+
+/**
+ * 説明用
+ */
+dl.description {
+	border-bottom: 1px solid #333;
+}
+
+dl.description dt,
+dl.description dd {
+	padding: 3px;
+}
+
+dl.description dt {
+	border-top: 1px solid #333;
+	clear: left;
+	float: left;
+	width: 250px;
+}
+
+dl.description dd {
+	background: #fff;
+	border-left: 1px solid #333;
+	border-top: 1px solid #333;
+	margin-left: 250px;
+}
+
+dl.description dl {
+	border: none;
+}
+
+dl.description dl dt {
+	border-top: 1px dotted #333;
+	clear: left;
+	float: left;
+	width: 200px;
+}
+
+dl.description dl dd {
+	background: #fff;
+	border-left: 1px dotted #333;
+	border-top: 1px dotted #333;
+	margin-left: 200px;
+}
+
+dl.description ul {
+	list-style-type: none;
+}
+
+/**
+ * ソースコード説明用
+ */
+.code {
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	font-family: Osaka-Mono, Consolas, 'Courier New', Courier, Monaco, monospace;
+	background:#eeeeee none repeat scroll 0 0;
+	border:1px solid #999999;
+	color:#444444;
+	display:block;
+	font-size:1em;
+	margin:0 1em 1em 1em;
+	overflow:scroll;
+	padding:0 0.5em 0.5em 0.5em;
+	max-height:800px;
+}

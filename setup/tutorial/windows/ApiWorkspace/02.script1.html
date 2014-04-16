@@ -1,0 +1,85 @@
+<p>
+	ワークスペースにスクリプトを定義する事が出来ます。<br />
+	<br />
+	ワークスペースに定義されたスクリプトはワークスペースだけでなくすべてのウインドウでも使用する事が出来ます。<br />
+</p>
+
+
+<h3>スクリプトの作成</h3>
+<p>
+	スクリプトを作成するにはworkspace/client.jsに設定します<br />
+	予めいくつかのスクリプトが設定されていますので、新しいスクリプトは追記してください。<br />
+	今回は例としてログアウトをする機能をもったスクリプトを作成します。<br />
+	ログアウトには特別な設定は必要なく、/logoutにアクセスするだけで実行出来ましたが、スクリプトで実装出来るようにします<br />
+</p>
+
+<pre class='code'>
+scripts.logout = function logout () {
+    location.href = '/logout';
+};</pre>
+
+<p>
+	これだけで実行可能なスクリプトが定義されました。<br />
+	ドックのデザインを次のように変更しするとドックにログアウトのミニバーが追加されていると思います。<br />
+</p>
+<pre class='code'>
+&#60;div id="dock"&#62;
+    &#60;div class="winMin defaultUI"&#62;
+        &#60;div class="minContainer"&#62;
+            &#60;div class="minTitle" data-winname="lisence"&#62;&#60;span id='startTitle'&#62;guest&#60;/span&#62;&#60;/div&#62;
+        &#60;/div&#62;
+    &#60;/div&#62;
+    &#60;div class="winMin defaultUI"&#62;
+        &#60;div class="minContainer"&#62;
+            &#60;div class="minTitle" data-script="logout"&#62;logout&#60;/div&#62;
+        &#60;/div&#62;
+    &#60;/div&#62;
+&#60;/div&#62;</pre>
+
+<p>
+	クリックするとログアウトします。
+	正常に動作する事を確認してください。<br />
+	イベントはclick以外で動作させる事もできます。
+	例えばdata-script='mouseover:logout'などと設定してください。
+	マウスがミニバーに触れた瞬間にログアウトします。<br />
+	また複数のイベントを同時に設定することもできます。
+	その際はdata-script='event1:script1,event2:script2,event3:script3'と設定します。
+</p>
+
+<h3>スクリプトを設定出来るかどうかを検証する</h3>
+<p>
+	パラメータ不足やイベントに制限がある場合に、エレメントにスクリプトが設定可能かを検証する事が出来ます。<br />
+	今回は、click時にのみ設定できるように制限をしてみます
+</p>
+<pre class='code'>
+scripts.logout.bindValid = function logoutBindValid (event, el) {
+    if (event !== 'click') {
+        return new Error('click以外のイベントには追加できません');
+    }
+};</pre>
+<p>
+	これによりdata-script='mouseover:logout'は検証によって制限され動作しません。
+</p>
+
+<h3>イベントを追加したエレメントを操作する</h3>
+<p>
+	エレメントに対して、イベントを追加と同時に操作を行う事ができます。<br />
+	今回はlogoutの文字色を黄色にしてみます
+</p>
+<pre class='code'>
+scripts.logout.onShow = function logoutOnShow (el) {
+    $(el).css('color', 'yellow');
+};</pre>
+
+<p>
+	文字色が黄色になっている事を確認してください。<br />
+	関数onShowを定義することで、イベント追加時に引数にそのエレメントを引き渡して実行します。<br />
+</p>
+
+
+<h3>ウインドウスクリプト・ポートレットスクリプト</h3>
+<p>
+	ワークスペースのスクリプトは、ワークスペース全体、ウインドウ内のコンテンツで設定する事が出来ます。<br />
+	一方ウインドウスクリプト、ポートレットスクリプトはそれぞれウインドウ内とポートレット内のみ設定することができます。<br />
+	適用範囲は異なりますが、bindValidやonShowなどの設定方法は同じです。<br />
+</p>

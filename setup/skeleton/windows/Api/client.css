@@ -1,0 +1,14 @@
+contents {
+	padding: 20px;
+}
+
+p {
+	margin: 20px;
+}
+
+ul.concept {
+	margin: 5px;
+	padding-left: 10px;
+	list-style-type: decimal;
+	list-style-position: inside;
+}

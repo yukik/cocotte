@@ -1,0 +1,14 @@
+.ApiWin {
+	padding: 20px;
+}
+
+.ApiWin p {
+	margin: 20px;
+}
+
+.ApiWin ul.concept {
+	margin: 5px;
+	padding-left: 10px;
+	list-style-type: decimal;
+	list-style-position: inside;
+}

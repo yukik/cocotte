@@ -1,0 +1,130 @@
+<h3>ウインドウスクリプト(サーバサイド)</h3>
+
+<p>
+	スクリプトにはクライアントサイドスクリプトとサーバサイドスクリプトの２つが存在します。<br />
+	ここではサーバサイドのスクリプトを解説します。
+</p>
+
+<p>
+	スクリプトを設定する事で、ユーザーがウインドウに独自の変数を格納・編集する事が出来るようになります。
+	以下、index.jsへスクリプトの記述した例です
+</p>
+
+<h4>index.js</h4>
+<pre class='code'>
+var win = {
+    title: 'タイトル'
+  , contents: 'コンテンツ'
+  , script  : {
+        script1 : function (win, data, callback) {
+            // 何らかの処理
+        }
+    }
+};
+module.exports = exports = win;</pre>
+<p>
+	クライアントサイドの場合と異なり、index.jsに追加する事でサーバサイドは設定することで動作します。<br />
+	しかし、scriptのコード量が多くなるにつれ管理が難しくなるため、通常は別ファイルを作成します。<br />
+	明示的にclient.js, server.jsとファイルを分かりやすく行う事はよい方法です。<br />
+	上記をファイルを分けた例は次の通りです。
+</p>
+<h4>index.js</h4>
+<pre class='code'>
+var win = {
+    title: 'タイトル'
+  , contents: 'コンテンツ'
+  , script  : require('./server')
+};
+module.exports = exports = win;</pre>
+<h4>server.js</h4>
+<pre class='code'>
+var server = {};
+server.script1 = function (win, data, callback) {
+    // 何らかの処理
+};
+module.exports = exports = server;</pre>
+
+<h3>スクリプトの呼び出し1</h3>
+<p>
+	サーバスクリプトを呼び出す為には、クライアントサイドのスクリプトが必要となります。<br />
+	すべてのウインドウスクリプトはクライアントサイドから次の記述をすることで、実行されます。
+</p>
+<h4>client.js</h4>
+<pre class='code'>
+client.click = function (e) {
+    var win = this.getWin();
+    win.server('script1', 1, function (err, result) {
+        if (err) {
+            console.log(err);
+        }
+    });
+};</pre>
+
+<p>
+	上記のコードをclient.jsに記述する事で、サーバサイドスクリプトのscritp1が実行されます。<br />
+	win.serverのメソッド定義は次の通りです。<br />
+	win.server(scriptName, data, callback)<br />
+	@param {String} scriptName<br />
+	@param {Mixed} data<br />
+	@param {Function} callback<br />
+	dataとcallbackは省略する事もできます。また、dataを省略しcallbackをつめて記述するWin.server(scriptName, callback)も許されています。<br />
+</p>
+
+<h3>変数設定</h3>
+<p>
+	サーバサイドスクリプト内でウインドウに変数を定義する為には、winオブジェクトにプロパティを直接設定することでも可能です<br />
+	ただし、この方法は３つの理由により推奨されません。<br />
+	<ul>
+		<li>ウインドウの既定の変数・メソッドを上書きし動作不良を起こす可能性が存在する</li>
+		<li>ユーザーがログアウトし、ウインドウが永続化された際に保存対象にならない</li>
+		<li>クライアントで利用する為には、サーバへ取得する為のメソッドを記述する必要がある</li>
+	</ul>
+	そこで変数の格納には、win.setLocalメソッドを使用します。
+	この変数は、上記の問題をすべて解決します。
+</p>
+<h4>server.js</h4>
+<pre class='code'>
+var server = {};
+server.script1 = function (win, score, callback) {
+     win.setLocal('score', score);
+};
+module.exports = exports = server;</pre>
+
+<p>
+	変数はかならず検証コードを記述する必要があります。<br />
+	index.jsを次のように変更し、さらにvalid.jsを作成してください。<br />
+	validに記載されていない変数名は設定する事ができません<br />
+	これにより、安全な値をサーバとクライアントで共有します
+</p>
+<h4>index.js</h4>
+<pre class='code'>
+var win = {
+    title: 'タイトル'
+  , contents: 'コンテンツ'
+  , script  : require('./server')
+  , valid   : require('./valid')
+};
+module.exports = exports = win;</pre>
+
+<h4>valid.js</h4>
+<pre class='code'>
+var valid = {};
+valid.score = function (value) {
+    return is(Number, value);
+};
+module.exports = exports = valid;</pre>
+
+<p>
+	setLocalを実行すると、自動的にクライアントに値を同期します。<br />
+	クライアントでは、win.onLocal(変数名, コールバック)により、変数の変更をイベントとして登録する事が出来ます。<br />
+	<br />
+	(特殊な変数)<br />
+	変数名にハイフンを含んだ場合に検証メソッドはハイフンより前の文字列のメソッドを対象に実行します。<br />
+	動的な名称をもつ値の検証は、ハイフン含む事で格納する事が出来ます。
+</p>
+
+
+
+
+
+

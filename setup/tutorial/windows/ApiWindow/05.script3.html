@@ -1,0 +1,85 @@
+<h3>ウインドウスクリプト(連携)</h3>
+
+<p>
+	クライアントサイドとサーバサイドの両方のスクリプトの記述方法は先の項で説明しました。<br />
+	じつはサーバサイドスクリプトからクライアントスクリプトを呼び出す方法はまだ説明していません。<br />
+	この項では、それも含め簡単なサンプルからスクリプトの全体の動作を確認します。<br />
+	<a data-winname='tutorialScript'>チュートリアル - スクリプト</a>を開く<br />
+	<br />
+	ウインドウには一つだけボタンがあり、変数を格納・カウントアップしています。<br />
+	この簡単な動作を実現する為に次のファイルを作成しています。
+</p>
+
+<h4>index.js</h4>
+<pre class='code'>
+var helper = require('cocotte/window/helper');
+var win = {
+    title   : 'チューリアル - スクリプト'
+  , contents: helper.html(__dirname, 'index')
+  , script  : require('./server')
+};
+module.exports = exports = win;</pre>
+
+<h4>index.html</h4>
+<pre class='code'>
+&#60;button data-script='hoge'&#62;hoge&#60;/button>&#60;br /&#62;
+結果:&#60;span class='result'&#62;&#60;/span&#62;</pre>
+
+<h4>server.js</h4>
+<pre class='code'>
+var server = {};
+
+// (1) ウインドウの作成時に実行されます
+server.onCreate = function onCreate (win) {
+    win.locals.score = 0;
+};
+
+// (3) クライアントの表示時に値を返します
+server.getScore = function getScore (win, data, callback) {
+    if (is(Function, callback)) {
+        callback(null, win.locals.score);
+    }
+};
+
+// (5) クライアントから呼び出されます
+server.hoge = function hoge (win, score) {
+    win.locals.score += score;
+    // クライアントのメソッドを呼び出します
+    win.client('cbHage', win.locals.score);
+};
+
+module.exports = exports = server;</pre>
+
+<h4>client.js</h4>
+<pre class='code'>
+// (2) 前回のローカル変数の値を取得し設定します
+client.onShow = function onShow (win) {
+	win.server('getScore', function (err, score) {
+		win.el('span.result').text(score);
+	});
+};
+
+// (4) エレメントのイベントにバインドされています
+client.hoge = function hoge () {
+	this.getWin().server('hoge', 1);
+};
+
+// (6) サーバより呼び出しされます
+client.cbHage = function cbHage (win, score) {
+	win.el('span.result').text(score);
+};</pre>
+
+
+<p>
+	サーバサイドスクリプトからクライアントサイドスクリプトを呼び出す為には
+	win.clientを実行します。<br />
+	定義は以下の通りです
+	win.client(scriptName, data)<br />
+	@param {String} scriptName<br />
+	@param {Mixed} data<br />
+	win.serverと異なり、コールバック関数を指定する事は出来ません。<br />
+	<br />
+	処理の順番はコードのコメントの番号通りです。<br />
+	1から3は、ウインドウが作成・表示された際に実行されます<br />
+	4から6は、ユーザーがボタンをクリックするたびに実行されます
+</p>

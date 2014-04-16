@@ -1,0 +1,32 @@
+<h3>選択型</h3>
+
+<pre>
+文字列のリストから複数を選択して登録する事が出来ます
+
+値リストにない値を登録
+	検証エラーにはならず保存もされません
+	またminとmaxのカウントの対象に含まれません
+
+重複した値を登録
+	ひとつだけ登録され、min,maxのカウントは一つと数えられます
+
+値リストとタグ型と異なる点
+	予め選択出来る項目が決定されます
+	選択数を制限する事が出来ます
+	検索時に柔軟な絞り込みが出来ます（いずれかON、すべてをON等）
+
+schema (共通)
+	type     : {String}  データ型      固定値: 'selection'
+	name     : {String}  システム名    既定値: 'selection' protoにて設定
+	caption  : {String}  表示名        既定値: 'selection' protoにて設定
+	primary  : {Boolean} 主フィールド  既定値: false       protoにて設定 => 常にfalseです
+	autoTo   : {Function}自動設定      既定値: null        protoにて設定 => 常にnullです
+	readonly : {Boolean} 読取専用      既定値: false       protoにて設定
+	required : {Boolean} 必須          既定値: false       protoにて設定 => 常にfalseです
+	defaultTo: {Array}   既定値        既定値: null        protoにて設定
+	filterTo : {Object}  条件          既定値: null        protoにて設定
+schema（個別）
+	values   : {Array}  値リスト       既定値: ['項目1','項目2','項目3']         
+	min      : {Number} 最小選択数     既定値: 0 valuesの要素数以下
+	max      : {Number} 最大選択数     既定値: false 1以上、min以上。valuesの要素数以下もしくはfalse(チェックしない)
+</pre>

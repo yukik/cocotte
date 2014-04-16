@@ -1,0 +1,102 @@
+<p>
+	ウインドウに多くのHTMLコンテンツやテキストコンテンツを追加する場合は、index.jsに記述する際に煩雑になります。<br />
+	別ファイルにする事で、余分なエスケープ等必要なく管理が楽になります。<br />
+	ここでの解説では、別ファイルで管理する為のヘルパーを使用します
+
+<h3>cocotte/window/helperモジュール</h3>
+<dl class='description'>
+	<dt>html</dt>
+	<dd>
+		html (dir, subdir, file) <br />
+		@param {String} dir 検索対象のディレクトリ<br />
+		@param {String} subdir 検索対象のサブディレクトリ。省略可能<br />
+		@param {String} file HTMLファイル名。拡張子省略<br />
+		<br />
+		対象ディレクトリにあるHTMLファイルを検索します。<br />
+		{html: ファイルの内容}を返します
+	</dd>
+
+	<dt>text</dt>
+	<dd>
+		text (dir, subdir, file) <br />
+		@param {String} dir 検索対象のディレクトリ<br />
+		@param {String} subdir 検索対象のサブディレクトリ。省略可能<br />
+		@param {String} file テキストファイル名。拡張子省略<br />
+		<br />
+		対象ディレクトリにあるテキストファイルを検索します。<br />
+		{text: ファイルの内容}を返します
+	</dd>
+
+	<dt>container</dt>
+	<dd>
+		container (dir, subdir)
+		@param {String} dir 検索対象のディレクトリ<br />
+		@param {String} subdir 検索対象のサブディレクトリ。省略可能<br />
+		<br />
+		対象ディレクトリにあるcontainer.htmlを検索します。<br />
+		ファイルの内容をテキストとして返します
+	</dd>
+</dl>
+
+<h3>index.js</h3>
+<pre class='code'>
+var helper = require('cocotte/window/helper');
+
+var window = {
+    title   : 'Window API'
+  , contents: [
+            helper.html(__dirname, '00.first')
+          , helper.html(__dirname, '01.second')
+          , helper.text(__dirname, '02.third')
+        ]
+  , container: helper.container(__dirname)
+};
+module.exports = exports = window;</pre>
+
+<h3>00.first.html</h3>
+<pre class='code'>
+&#60;h&#62;最初に表示&#60;/h&#62;
+&#60;p&#62;
+    内容
+&#60;/p&#62;
+</pre>
+
+<h3>01.second.html</h3>
+<pre class='code'>
+&#60;h&#62;２番目に表示&#60;/h&#62;
+&#60;p&#62;
+    内容
+&#60;/p&#62;
+</pre>
+
+<h3>02.third.txt</h3>
+<pre class='code'>
+３番目に表示
+内容
+</pre>
+
+<h3>container.html</h3>
+<pre class='code'>
+&#60;h2&#62;コンテナ&#60;/h2&#62;
+&#60;ul&#62;
+	&#60;li data-script='tab' class='tabActive'&#62;first&#60;/li&#62;
+	&#60;li data-script='tab' class='tabInactive'&#62;second&#60;/li&#62;
+	&#60;li data-script='tab' class='tabInactive'&#62;third&#60;/li&#62;
+&#60;/ul&#62;
+&#60;div class='tab'&#62;
+	&#60;class='tabActive'&#62;&#123;0&#125;&#60;/div&#62;
+	&#60;class='tabInactive&#62;&#123;1&#125;&#60;/div&#62;
+	&#60;class='tabInactive'&#62;&#123;2&#125;&#60;/div&#62;
+&#60;/div&#62;</pre>
+
+<p>
+	index.jsがすっきりして全体が見やすくなりました。<br />
+	さらにHTMLとテキストの混在でもそれぞれを別々に編集する事が可能です。
+	コンテナは今回タグ機能を追加したものを例にしましたが、
+	工夫次第で可変グリッドやアコーディンパネルなど実装する事が出来ます<br />
+	helperの__dirnameはindex.jsと同じディレクトリを示します。<br />
+	サブディレクトリを作成し管理する場合はhelper.html(__dirname, 'sub1', '00.first')とする事が出来ます
+</p>
+
+
+

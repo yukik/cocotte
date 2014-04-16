@@ -1,0 +1,127 @@
+<h3>cocotteのデータ管理</h3>
+<p>
+	cocotteではデータ管理を行う為にいくつかのオブジェクトを容易しています<br />
+	<br />
+	ここでは概要だけを説明します。より詳しい内容は<a data-winname='ApiDatabase'>Database API</a>、
+	<a data-winname='ApiModel'>Model API</a>、<a data-winname='ApiDatasource'>Datasource API</a>、
+	<a data-winname='ApiDiagram'>Diagram API</a>を確認してください。<br />
+	<br />
+	ウインドウでデータベースへの操作する為に４種類のオブジェクトを理解する必要があります。<br />
+	複雑なように感じるかもしれませんが、それぞれを適切に設定することで、継続した修正を容易にする事が出来ます。<br />
+	cocotteのデータ管理の特徴は、モデルへの変更は即時全ユーザーのワークスペースに反映される事です<br />
+	また、データソースへの変更は同じワークスペースに反映されます。<br />
+	このように、リアルタイムをサポートしているため、ブラウザのリロードは必要ありません。
+</p>
+
+<h3>データ管理オブジェクト</h3>
+<dl class='description'>
+	<dt>Database</dt>
+	<dd>
+		データベース接続情報です。<br />
+		データベースからデータを取得したり永続化の処理を担当します<br />
+		詳細は<a data-winname='ApiDatabase'>Database API</a>を参照してください。
+	</dd>
+	<dt>Model</dt>
+	<dd>
+		データベースのテーブルおよびそのフィールドの定義と検証コードを保有します。<br />
+		実データは保持しません。<br />
+		データベース接続情報を必要とします<br />
+		また、Datasouceから永続化の処理を委譲され、さらにDatabaseに委譲します<br />
+		詳細は<a data-winname='ApiModel'>Model API</a>を参照してください。
+	</dd>
+	<dt>Datasource</dt>
+	<dd>
+		フィールド定義・値の保持・変更を行う事が出来ます。<br />
+		メモリ上に存在するテーブルです。<br />
+		Modelと連携することで、データベースからのデータ取得や保存が出来るようになります。<br />
+		単体でも使用する事ができます。<br />
+		ポートレットから参照された場合は、ビューとも双方向データバインドが出来るようになりますす<br />
+		詳細は<a data-winname='ApiDatasource'>Datasource API</a>を参照してください。
+	</dd>
+	<dt>Diagram</dt>
+	<dd>
+		いくつかのDatasourceを保有し、Datasource間の連携を定義します<br />
+		詳細は<a data-winname='ApiDiagram'>Diagram API</a>を参照してください。
+	</dd>
+</dl>
+
+<h3>作成例</h3>
+<p>
+	以下にそれぞれのオブジェクトのコードを簡単な例で挙げます。<br />
+	今はただ、そういった種類のものが存在する事を感じるだけでかまいません。<br />
+	詳細はそれぞれの項目でさらに説明します
+</p>
+<dl class='description'>
+	<!-- データベース -->
+	<dt>Database</dt>
+	<dd>データベースへの接続情報を記載します。
+		databasesフォルダに接続名と同名のファイルを作成してください。<br />
+		<pre class='code'>
+var db = {
+    driver: 'mongodb'
+  , host  : '127.0.0.1'
+  , port  : 27017
+  , db    : 'cocotte'
+  , readonly: false
+  , file: {
+        type: 'file'
+      , path: 'files'
+	}
+};
+module.exports = exports = db;</pre>
+	</dd>
+
+	<!-- モデル -->
+	<dt>model</dt>
+	<dd>
+		modelsフォルダにモデル名と同名のファイルを作成してください。
+		<pre class='code'>
+var model = {
+    name: 'student'
+  , fields: {
+        name: 'text'
+      , age : 'number'
+    }
+};
+module.exports = exports = model;</pre>
+	</dd>
+
+	<!-- データソース -->
+	<dt>datasource</dt>
+	<dd>
+		datasourcesフォルダにデータソース名と同名のファイルを作成してください。<br />
+		以下は、モデルと連携した最も単純な例です
+		<pre class='code'>
+var ds = {
+    name: 'student'
+  , model: 'student'
+};
+module.exports = exports = ds;</pre>
+	</dd>
+
+	<!-- ダイアグラム -->
+	<dt>diagram</dt>
+	<dd>
+		diagramsフォルダにダイアグラム名と同名のファイルを作成してください。<br />
+		以下は、ダイアグラムの簡単な例です
+		<pre class='code'>
+var Diagram = require('cocotte/diagram');
+var schema = {
+    datasources: {
+        teacher: {}
+      , classRoom: {}
+      , student : {}
+    }
+  , relations: ['classRoom.name = student.classRoom']
+};
+Diagram.hook(schema, 'teacher.add',
+    function (row) {
+        var student = this.datasources.student.currentRow();
+        if (student) {
+            student.teacher.set(row.name);
+        }
+    }
+);
+module.exports = exports = schema;</pre>
+	</dd>
+</dl>

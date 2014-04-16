@@ -1,0 +1,43 @@
+<p>
+	フィールド型はデータを保存する時のルールを決定します。<br />
+	
+	
+	プロパティを設定しない場合はフィールド型を文字列で渡すだけで設定できます
+	プロパティを設定する場合はObjectにしてください
+
+</P>
+
+
+
+
+<pre>
+
+rowno    :　行番号
+			　必ず設定される行を一意に特定する為のフィールドで必ずデータソースやモデルに一つだけ設定されます
+text     :　文字列
+number   :　数値
+check    :　真偽値
+selection:　真偽値（複数）
+timestamp:　日時
+date     :　日付
+time     :　時刻
+tag      :　タグ
+file     :　ファイル
+comment  :　コメント
+			　データ参照時は、登録数、最終更新者、最終更新日時のみを参照する事が出来ます
+			　内容をダッシュボードに表示する事が出来るようになります
+			　コメントの実体は別のデータソースに保存されています
+
+共通プロパティ
+	type     : {String}   データ型     固定値: 'text'
+	name     : {String}   システム名   既定値: 'text'
+	caption  : {String}   表示名       既定値: 'text'
+	primary  : {Boolean}  主フィールド 既定値: false (primaryFieldから自動的に設定)
+	readonly : {Boolean}  読取専用     既定値: false 
+	required : {Boolean}  必須         既定値: false 
+	defaultTo: {String}   既定値       既定値: null  (動的)
+	filterTo : {String}   条件         既定値: null  (動的)
+	convert  : {Function} 変換         既定値: null
+	valid    : {Function} 検証         既定値: null
+
+</pre>

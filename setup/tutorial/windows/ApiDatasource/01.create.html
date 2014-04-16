@@ -1,0 +1,69 @@
+<p>
+	データソースの設定方法を説明します。
+	以下はモデルを元にして作成した最も単純な例です。
+</p>
+<pre class='code'>
+var ds = {
+    name : 'student'
+  , model: 'student'
+};
+module.exports = exports = ds;</pre>
+<p>
+	必須の項目はnameのみで、フィールドはモデルから取得します。<br />
+	自動的に永続化の機能を付加します。<br />
+	<br />
+	次の例ではフィールドを設定し、モデルにないフィールドを追加しました。<br />
+	またモデルのフィールドのうち使用するものだけを含める事が出来ます。<br />
+	studentモデルからはnameフィールドのみ設定されます。<br />
+	scoreフィールドはstudentモデルには存在しないため、Datasourceのみで使用でき永続化の対象になりません。
+</p>
+<pre class='code'>
+var ds = {
+    name  : 'student'
+  , model : 'student'
+  , fields: {
+                name : {}
+              , score: {type: 'number', caption: '点数'}
+            }
+};
+module.exports = exports = ds;</pre>
+<p>
+	モデルを指定せずに作成されたデータソースは、永続化の機能を持ちません。<br />
+	ただし、後述するダイアグラムを使用する事で、他のデータソースとの連携を行う事が出来ます。<br />
+	永続化は必要ないが、連携を必要とする場面が発生した場合は作成することがあります<br />
+	次の例ではモデルを設定していないデータソースです。
+</p>
+<pre class='code'>
+var ds = {
+    name  : 'student'
+  , fields: {
+                name : {type: 'text'  , caption: '氏名'}
+              , score: {type: 'number', caption: '点数'}
+            }
+};
+module.exports = exports = ds;</pre>
+
+<h3>プロパティ</h3>
+<dl class='description'>
+	<dt>name</dt>
+	<dd>
+		モデル名
+	</dd>
+
+	<dt>caption</dt>
+	<dd>
+		表示名
+	</dd>
+
+	<dt>model</dt>
+	<dd>
+		モデル
+	</dd>
+
+	<dt>fields</dt>
+	<dd>
+		フィールド
+	</dd>
+</dl>
+
+

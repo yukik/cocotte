@@ -1,0 +1,23 @@
+<h3>日にち型</h3>
+<pre>
+schema (共通)
+	fieldType: {String}      データ型        固定値: 'date' protoにて設定
+	name     : {String}      システム名      既定値: 'date' protoにて設定
+	caption  : {String}      表示名          既定値: 'date' protoにて設定
+	primary  : {Boolean}     主フィールド    既定値: false  protoにて設定
+	autoTo   : {Function}    自動設定        既定値: null   protoにて設定
+	readonly : {Boolean}     読取専用        既定値: false  protoにて設定
+	required : {Boolean}     必須            既定値: false  protoにて設定
+	defaultTo: {String|Date} 既定値          既定値: null   protoにて設定 => 注参照
+	filterTo : {String}      条件            既定値: null   protoにて設定
+
+schema（個別）
+	min      : {String|Date} 最小値          既定値: '1900-01-01' 注参照
+	max      : {String|Date} 最大値          既定値: '2099-12-31' 注参照
+	calendar : {String}      カレンダー名    既定値: 'default'
+
+	注）Date型では固定値。String型では日にち、
+		 それ以外はcalc(コマンド)で計算された日時
+
+	タイムゾーンの影響を受けません
+</pre>

@@ -1,0 +1,232 @@
+<p>
+	モデルを作成するには、modelsフォルダにモデル名と同じ名称のファイルを作成してください。
+	以下は最も単純な例です。
+</p>
+<pre class='code'>
+var model = {
+    name  : 'student'
+  , fields: {
+        name: 'text'
+      , age : 'number'
+    }
+};
+module.exports = exports = model;</pre>
+<p>
+	nameプロパティとfieldsプロパティは必須です。<br />
+	モデルは他にも設定出来る項目があります<br />
+	次の例では、表示名と主フィールドを設定しています
+</p>
+<pre class='code'>
+var model = {
+    name   : 'student'
+  , caption: '生徒'
+  , fields : {
+        name: 'text'
+      , age : 'number'
+    }
+  , primaryFields: 'name'
+};
+module.exports = exports = model;</pre>
+<p>
+	フィールドはも設定を行う事が出来ますが、上記の記述方法では設定を追加する事は出来ません<br />
+	上記は省略形の記述方法で本来はオブジェクトを渡す必要があります。<br />
+	一番最初の例を本来の方法で記述すると以下の通りです。
+</p>
+<pre class='code'>
+var model = {
+    name: 'student'
+  , fields: {
+        name: {type: 'text'}
+      , age : {type: 'number'}
+    }
+};
+module.exports = exports = model;</pre>
+<p>
+	これによってフィールドにもプロパティを設定することができます。<br />
+	しかし設定されたtype(フィールド型)によって設定できる項目は異なります。<br />
+	次の例では、全フィール型で共通のプロパティの表示名を設定しています<br />
+</p>
+<pre class='code'>
+var model = {
+    name: 'student'
+  , fields: {
+        name: {type: 'text'  , caption: '氏名'}
+      , age : {type: 'number', caption: '年齢'}
+    }
+};
+module.exports = exports = model;</pre>
+<p>
+	フィールドのプロパティについては、ここでは解説しません。<br />
+	<a data-winname='ApiField'>Field API</a>を参照してください
+</p>
+
+
+<h3>プロパティ</h3>
+<p>
+	プロパティはモデルに対してのプロパティです。<br />
+	フィールドのプロパティではないので注意してください。
+</p>
+
+<dl class="description">
+	<dt>name</dt>
+	<dd>
+		モデル名。必須。英数字の文字列。かならずファイル名と同じにする必要があります。<br />
+		運用後に変更行うと異なるテーブルに保存を行いますので、データのロストが発生します。
+	</dd>
+
+	<dt>caption</dt>
+	<dd>
+		表示名。文字列。省略した場合はモデル名と同じになります。<br />
+		モデルからデータソースに、データソースからポートレットに表示名は受け継がれるためデータソース・ポートレットで必ず個別に設定されている場合は使用されません
+	</dd>
+
+	<dt>database</dt>
+	<dd>
+		データベース接続名。文字列。データベース名の中から選択。省略した場合はdefaultになります。
+	</dd>
+
+	<dt>fields</dt>
+	<dd>
+		フィールド。オブジェクト。<br />
+		フィールド名をキーに設定値をオブジェクトで記述します
+		対応フィールド型は<a data-winname='ApiField'>Field API</a>を参照
+	</dd>
+
+	<dt>primaryField</dt>
+	<dd>
+		主フィールド<br />
+		行を一意に特定するために使用します<br />
+		必ずしも設定しなくかまいません<br />
+		設定出来るデータ型に制限があり、文字列型、数字型、日時型のみです<br />
+		次の機能・制限が発生します<br />
+			設定されたフィールドは強制的に必須フォールドに設定されます<br />
+			フィールドの値が一意になるように設定さます（組み合わせの場合も同様）<br />
+			インデックスが設定されます<br />
+			追加後は値の変更を行う事が出来ません<br />
+		リレーショナルデータベースの主キーと似た機能です<br />
+	</dd>
+
+	<dt>beforeAdd</dt>
+	<dd>
+		beforeAdd (rowno, data, user, callback)<br />
+		@param {Number}   rowno<br />
+		@param {Object}   data<br />
+		@param {Object}   user<br />
+		@param {Function} callback ({Error} err, {Object} newData)<br />
+		<br />
+		行の追加前のフック。<br />
+		addメソッドを実行した際に、保存前に実行される。<br />
+		追加を中断する場合は、errにErrorオブジェクトを設定してください。<br />
+		newDataの値を設定する事で、値を強制的に変更する事が出来ます。<br />
+		次の例は、二つのフィールドにまたがる検証を行った後に、作成日時を強制的に設定しています<br />
+		<pre class='code'>
+model.beforeAdd = function beforeAdd (rowno, data, user, callback) {
+	var err = null;
+    if (data.job === 'その他' &#38;&#38; !data.etc_job) {
+        err = new Error('その他を選択した場合は、その他の職業を入力してください');
+    }
+    data.created = new Data();
+    callback(err, data);
+};</pre>
+	</dd>
+
+	<dt>afterAdd</dt>
+	<dd>
+		afterAdd (rowno, data, user)<br />
+		@param {Number}   rowno<br />
+		@param {Object}   data<br />
+		@param {Object}   user<br />
+		@param {Function} callback () <br />
+		<br />
+		行の追加後のフック。<br />
+		addメソッドを実行した際に、保存後に実行されます。<br />
+		保存まで至らない場合は実行されません。<br />
+		生徒を追加した際に、教室の人数に加算する例です
+		<pre class='code'>
+var Model     = require('cocotte/model')
+  , RoomModel = Model.get('room');
+model.afterAdd = function afterAdd (rowno, data, user, callback) {
+    RoomModel.findOne({name: data.room}, function (err, result) {
+        var room;
+        if (result) {
+            room = {student: result.student + 1};
+            RoomModel.update(result.rowno, room, user, callback);
+        } else {
+            room = {name: data.room, student: 1};
+            RoomModel.add(room, user, callback);
+        }
+    });
+};</pre>
+
+	</dd>
+
+	<dt>beforeUpdate</dt>
+	<dd>
+		beforeUpdate (rowno, data, user, callback)<br />
+		@param {Number}   rowno<br />
+		@param {Object}   data<br />
+		@param {Object}   user<br />
+		@param {Function} callback ({Error} err, {Object} newData)<br />
+		<br />
+		行の更新前のフック
+	</dd>
+
+	<dt>afterUpdate</dt>
+	<dd>
+		afterAdd (rowno, data, user)<br />
+		@param {Number} rowno<br />
+		@param {Object} data<br />
+		@param {Object} user<br />
+		<br />
+		行の更新前のフック
+	</dd>
+
+	<dt>beforeRemove</dt>
+	<dd>
+		beforeRemove (rowno, data, user, callback)<br />
+		@param {Number}   rowno<br />
+		@param {Object}   data<br />
+		@param {Object}   user<br />
+		@param {Function} callback ({Error} err, {Object} newData)<br />
+		<br />
+		行の削除前のフック
+	</dd>
+
+	<dt>afterRemove</dt>
+	<dd>
+		afterAdd (rowno, data, user)<br />
+		@param {Number} rowno<br />
+		@param {Object} data<br />
+		@param {Object} user<br />
+		<br />
+		行の削除後のフック
+	</dd>
+</dl>
+
+<h3>フックの引数userは何か？</h3>
+<p>
+	引数userは操作を行ったユーザーの情報が設定されている事が期待されます。<br />
+	次の使用方法の項のadd, update, removeの引数でもuserの引数が存在します。
+	基本的にはそれらのメソッドで引き渡した値を示します。<br />
+	そのため、形式が定まっていない引数です。<br />
+	しかしプレゼンテーション層からのイベントで実行された際に、userには次のオブジェクトが設定されます。<br />
+ <pre class='code'>
+{
+    session   : 接続しているユーザーのセッションオブジェクト
+  , connection: Websocketコネクション
+  , win       : 操作しているウインドウ
+  , datasource: モデルと連携しているデータソース
+}</pre>
+	これを利用してフックでユーザーに関するさまざまな値を取得する事が出来ます。<br />
+	しかし、設定出来る値をすべてを覚えるのは大変です。<br />
+	cocotteではこのオブジェクトから値を簡単に使用できるuserInfo関数が用意しています。<br />
+	更新者の名前をcreatedフィールドに設定する例は次のようになります。
+<pre class='code'>
+var userInfo = require('cocotte/fx').userInfo;
+model.beforeUpdate = function beforeUpdate (rowno, data, user, callback) {
+	data.created = userInfo('name', user);
+};</pre>
+	簡素な記述になり動作を理解しやすくなりました。<br />
+	取得出来る項目はほかにもgroup, ip, uaなど多数あります。<br />
+	userInfoの解説は、<a data-winname='Api'>API概要</a>の関数の項を確認してください。
+</p>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>{{ title }}</title>
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="/lib/jquery.min.js"></script>
+
+	<!-- ホーム -->
+	<script type="text/javascript" src="/home/home.js"></script>
+
+	<!-- 個別css -->
+	<style>
+		body {
+			padding: 30px;
+			background-image: url(/home/desktop/login-bg-pc.jpg);
+		}
+		h1 {
+			font-family: arial,verdana,helvetica,sans-serif;
+			color: #E47911;
+			font-size: 18px;
+			margin-bottom: 30px;
+		}
+		dl {
+			width: 300px;
+		}
+		dt,dd {
+			height: 50px;
+		}
+		dt {
+			clear: left;
+			float: left;
+			width: 80px;
+		}
+		dd {
+			margin-left: 80px;
+			width: 500px;
+			padding-top: 15px;
+		}
+		.description {
+			font-size: 70%;
+			color: #cccccc;
+			background: #000000;
+			opacity: 0.6;
+			width: 450px;
+		}
+		.description li {
+			list-style-type: none;
+		}
+		#message {
+			color: yellow;
+			background-color: black;
+			opacity: 0.5;
+		}
+
+	</style>
+</head>
+<body>
+	<h1>{{ title }}</h1>
+	<dl>
+		<dt><img src='/home/desktop/organization-48.png' /></dt>
+		<dd><input type='text' id='group' name='group' value="group1" /></dd>
+
+		<dt><img src='/home/desktop/contacts-48.png' /></dt>
+		<dd><input type='text' id='user' name='user' value="admin" /></dd>
+
+		<dt><img src='/home/desktop/key-48.png' /></dt>
+		<dd><input type='password' id='password' name='password' value="admin" /></dd>
+
+		<dt></dt>
+		<dd><a href='javascript:home.login()'><img src='/home/desktop/login-48.png' /></a></dd>
+
+		<dt></dt>
+		<dd><label id='message'></label></dd>
+	</dl>
+	<ul class="description">
+		{% for l in description %}
+		  <li>{{ l }}</li>
+		{% endfor %}
+	</ul>
+</body>
+</html>

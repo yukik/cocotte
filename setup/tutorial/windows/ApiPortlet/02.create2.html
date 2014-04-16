@@ -1,0 +1,129 @@
+<p>
+	ポートレットの作成は、<a data-winname='Api'>API概要</a>のポートレットの項で
+	<a data-winname='tutorialMap'>チュートリアル - 地図</a>を例にあげました。<br />
+	この項では、それよりも多少複雑なポートレットの作成の例をあげます。<br />
+	<br />
+	スクリプトはウインドウにも作成する事ができました。前項の作成方法1で予告をしていた通り
+	<a data-winname='ApiWindow'>Window API</a>のスクリプト3の項で作成した数をカウントするスクリプトを
+	ポートレット化しながら、具体的な作成方法を説明します<br />
+	今回はサーバ側のスクリプトを記述したり、サーバクライアント間でデータ送信を行うため、チュートリアル - 地図よりは多少コーディングを必要とします。<br />
+    <a data-winname='tutorialScript'>チュートリアル - スクリプト</a><br />
+    <a data-winname='tutorialPortlet'>チュートリアル - ポートレット</a><br />
+    <br />
+</p>
+
+<h3>ポートレット化の全コード</h3>
+
+<p>
+    下記はウインドウスクリプトのポートレット化を行った場合の全コードです。<br />
+    <a data-winname='ApiWindow'>Window API</a>のスクリプト3の項を同時に表示しながら違いを確認してください。<br />
+    簡単にウインドウスクリプトとの違いを解説します
+    <ul>
+        <li>サーバ側の処理はserver.jsファイルは作成せず、index.jsに記述する</li>
+        <li>ビューファイルはPortlet.templatesに定義しないとクライアントサイドで使用できない</li>
+        <li>ローカル変数はwin.localの代わりに、Portlet.prototypeに設定する</li>
+        <li>サーバ・クライアント間で呼び出す事ができるメソッドはscriptsプロパティに明示的に定義する必要が有る</li>
+    </ul>
+</p>
+
+<h4>index.js</h4>
+<pre class='code'>
+// ヘルパー
+var helper = require('cocotte/portlet/helper');
+
+// (1) カウントアップするポートレットのコンストラクタです
+var Portlet = function CountupPortlet (options, win) {
+    if (options) {
+        this.options = options;
+    }
+};
+
+// ポートレットの機能を追加
+helper.inherit(Portlet);
+
+// クライアントサイドで使用するテンプレートを定義する
+Portlet.templates = ['index'];
+
+// クライアントサイドから実行する事が出来るスクリプトを定義する
+Portlet.prototype.scripts = ['getScore', 'hoge'];
+
+// ローカル変数
+Portlet.prototype.score = 0;
+
+// (4) クライアントの表示時に値を返します
+Portlet.prototype.getScore = function getScore (data, callback) {
+    if (is(Function, callback)) {
+        callback(null, this.score);
+    }
+};
+
+// (6) クライアントから呼び出されます
+Portlet.prototype.hoge = function hoge (score) {
+    this.score += score;
+    this.client('cbHage', this.score);
+};
+
+module.exports = exports = Portlet;</pre>
+
+<p>
+	index.jsでは、サーバサイドの処理を記述します。<br />
+	コンストラクタの引数は、optionsにウインドウ作成時にコンテンツに設定したプロパティが
+	winにこのコンテンツが所属するウインドウが設定されます。<br />
+	また、this.optionsに設定した値は、クライアントサイドのコンストラクタにも送信されます。<br />
+	今回は、クライアントサイドのコンストラクタの処理は省略しています。<br />
+	クライアントのメソッドを実行する為には、this.clientを使用します。<br />
+	このメソッドは、同じユーザーのすべての端末で実行されます
+</p>
+
+<h4>index.html</h4>
+<pre class='code'>
+    &#60;button data-script='hoge'&#62;hoge&#60;/button&#62;&#60;br /&#62;
+    結果:&#60;span class='result'&#62;&#60;/span&#62;</pre>
+
+<p>
+	ビューファイルは、ウインドウと異なりコンテンツ設定がないため、代わりにindex.jsではtemplatesに定義します。templatesはプロトタイプのプロパティではなく、
+	関数のプロパティです。<br />
+	また、ビューをclient.jsのコード内で作成する場合は必須ではありません。
+</p>
+
+
+<h4>client.js</h4>
+<pre class='code'>
+// (2) 表示時のHTMLを文字列で返します
+Client.prototype.toHtml = function toHtml () {
+    return this.templates.index;
+};
+
+// サーバから実行可能なスクリプト
+Client.prototype.scripts = ['cbHage'];
+
+// (3) 前回のローカル変数の値を取得し設定します
+Client.prototype.onShow = function onShow (portlet) {
+    portlet.server('getScore', function (err, score) {
+        portlet.el('span.result').text(score);
+    });
+};
+
+// (5) エレメントのイベントにバインドされています
+Client.prototype.hoge = function hoge () {
+    this.getPortlet().server('hoge', 1);
+};
+
+// (7) サーバより呼び出されます
+Client.prototype.cbHage = function cbHage (score) {
+    this.el('span.result').text(score);
+};</pre>
+
+<p>
+	ウインドウでは、コンテンツ管理によりビューを表示する事が出来ましたが、ポートレットではtoHtmlメソッドを記述しなければ画面に表示されません。<br />
+	また、index.jsで設定したtemplatesはクライアントサイドでthis.templates.[name]にてテキストしてを取得します。<br />
+	toHtmlは動的に文字列を作成することで、柔軟なビューを表示する事ができます。<br />
+	(5)でthis.getPortlet()とすることで、ポートレットオブジェクトを取得する事が出来ます<br />
+	portlet.server(serverScriptName, data, callback)<br />の形式でサーバサイドのスクリプトを実行する事が出来ます。<br />
+	dataおよびcallbackはどちらか一方もしくは両方を省略する事が出来ます。<br />
+	<br />
+	処理の順番はコードのコメントの番号通りです。<br />
+	1から4は、ポートレットが作成・表示された際に実行されます<br />
+	5から7は、ユーザーがボタンをクリックするたびに実行されます
+</p>
+

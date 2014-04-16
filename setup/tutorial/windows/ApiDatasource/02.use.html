@@ -1,0 +1,75 @@
+<p>
+	データソースを作成して使用するにはいくつかの方法があります。
+</p>
+<dl class="description">
+	<dt>コンストラクタ(schema)</dt>
+	<dd>
+		コンストラクタを使用した場合のDatasourceの例は以下の通りです<br />
+		<pre class='code'>
+var Datasource = require('cocotte/datasource');
+var schema = {
+    name  : 'student'
+  , fields: {
+                name : {type: 'text'  , caption: '氏名'}
+              , score: {type: 'number', caption: '点数'}
+            }
+};
+var ds = new Datasource(schema);</pre>
+	</dd>
+
+	<dt>コンストラクタ(model)</dt>
+	<dd>
+		コンストラクタにmodelオブジェクトを引数として設定した場合は、フィールド情報などが
+		自動設定され、永続化の機能をもったデータソースを簡単に作成する事が出来ます<br />
+				<pre class='code'>
+var Model = require('cocotte/model')
+  , Datasource = require('cocotte/datasource');
+var schema = {
+    name  : 'student'
+  , fields: {
+                name : {type: 'text'  , caption: '氏名'}
+              , score: {type: 'number', caption: '点数'}
+            }
+};
+var md = new Model(schema);
+var ds = new Datasource(md);</pre>
+		モデルのスキーマとデータソースのスキーマは似ていますが、異なる部分があるので
+		詳しくはそれぞれのAPIを参照してください。
+	</dd>
+	
+	<dt>Datasource.create(schema)</dt>
+	<dd>
+		<pre class='code'>
+var Datasource = require('cocotte/datasource');
+var schema = {
+    name  : 'student'
+  , fields: {
+                name : {type: 'text'  , caption: '氏名'}
+              , score: {type: 'number', caption: '点数'}
+            }
+};
+var ds = Datasource.create(schema);</pre>
+		先ほど異なるのはnew DatasourceのかわりにDatasource.createを使用しただけですが、
+		変数dsのスコープが破棄されても、作成されたデータソースは破棄されません。<br />
+		次の方法で、いつでも呼び出す事が出来ます
+		<pre class='code'>
+var dsId = ds.id;
+var ds2 = Datasource.get(dsId);</pre>
+		dsとds2は同じデータソースを示します。<br />
+		データソースを破棄するには、次のように行います
+		<pre class='code'>
+Datasource.remove(ds);</pre>
+	</dd>
+
+	<dt>Datasource.create(model)</dt>
+	<dd>
+		new Datasource(model)と同様にDatasource.create(model)も動作します。
+	</dd>
+
+	<dt>Datasource.create(builtInName)</dt>
+	<dd>
+		予め定義されていたスキーマ（ビルトイン）を使用すると簡単にデータソースを作成することが出来ます。
+	</dd>
+</dl>
+
+

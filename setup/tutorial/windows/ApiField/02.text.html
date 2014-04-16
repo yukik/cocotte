@@ -1,0 +1,22 @@
+テキストの説明
+
+<pre>
+
+ schema (共通)
+ 	type     : {String}  データ型      固定値: 'text'
+ 	name     : {String}  システム名    既定値: 'text' protoにて設定
+ 	caption  : {String}  表示名        既定値: 'text' protoにて設定
+ 	primary  : {Boolean} 主フィールド  既定値: false  protoにて設定
+ 	autoTo   : {Function}自動設定      既定値: null   protoにて設定
+ 	readonly : {Boolean} 読取専用      既定値: false  protoにて設定
+ 	required : {Boolean} 必須          既定値: false  protoにて設定
+ 	defaultTo: {String}  既定値        既定値: null   protoにて設定
+ 	filterTo : {String}  条件          既定値: null   protoにて設定
+ schema (個別)
+ 	min      : {Number}  最小文字長    既定値: 0      0-65535の間
+ 	max      : {Number}  最大文字長    既定値: 100    1-65535の間かつ最小文字長以上
+ 	trim     : {Boolean} トリム        既定値: true   falseに設定した場合は前後のスペース・改行・タブを削除しません
+ 	multiLine: {Boolean} 複数行        既定値: false  改行・タブを許可します
+ 	values   : {Array}   値リスト      既定値: null   設定された場合はリストからのみ選択出来ます
+
+</pre>

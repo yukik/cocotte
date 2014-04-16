@@ -1,0 +1,53 @@
+<p>
+	ポートレットは予め用意されているものを使用する事も出来ますが、独自に作成する事も出来ます。<br />
+	ここでは最も簡単なポートレットを作成方法を行います。<br />
+
+	今回作成するポートレットは、ウインドウスクリプトで作成した数をカウントするウインドウをそのままポートレット化します。<br />
+	次の二つのウインドウを開いてみてください<br />
+	<br />
+	<a data-winname='tutorialScript'>チュートリアル - スクリプト</a><br />
+	<a data-winname='tutorialPortlet'>チュートリアル - ポートレット</a><br />
+	<br />
+
+	どちらも同じ動作し、全く違いが無いように思われます。<br />
+	しかし、このウインドウのindex.jsを比較すると、ポートレットを使用した場合と未使用の場合の大きな違いを確認出来ます
+</p>
+
+<h3>チュートリアル - スクリプト</h3>
+<p>
+	ポートレットを使用していないウインドウです。<br />
+	すべてのスクリプトをウインドウに設定した場合は、もちろん下記のindex.jsだけでは動作しません。<br />
+	このほかにも、index.html, server.js, client.jsのファイルを作成する必要があります <br />
+	実際のウインドウにスクリプトを作成する方法は、<a data-script='tabfocus' data-win='ApiWindow' data-page='5'>Window APIのスクリプト3<a>で確認してください。
+</p>
+<pre class='code'>
+var helper = require('cocotte/window/helper');
+var win = {
+    title   : 'チューリアル - スクリプト'
+  , contents: helper.html(__dirname, 'index')
+  , script  : require('./server')
+};
+module.exports = exports = win;</pre>
+
+<h3>チュートリアル - ポートレット</h3>
+<p>
+	ポートレットを使用していないウインドウです。<br />
+	index.jsだけで目的のウインドウを表示する事が出来ます。<br />
+	他にファイルを用意する必要はありません。<br />
+	ここでは、Coutupという名前のポートレットを定義したことになっています。
+</p>
+
+<pre class='code'>
+var win = {
+	title   : 'チューリアル - ポートレット'
+  , contents: { portlet: 'Countup' }
+};
+module.exports = exports = win;</pre>
+
+<p>
+	上記のふたつのindex.jsを確認しました。<br />
+	ポートレットを利用する事で劇的にウインドウの作成が楽になる事を確認する事が出来ます。<br />
+	さらに、他のウインドウを作成した場合に、Countupポートレットは簡単に画面に追加する事ができます。<br />
+	じつは、ウインドウに設定したスクリプトを、ポートレットに作成し直す事はそれほど難しくはありません。<br />
+	次の「作成方法２」の項でウインドウに設定したスクリプトをポートレット化してみましょう。
+</p>

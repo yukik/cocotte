@@ -1,0 +1,247 @@
+<p>
+	データソースのいくつかのメソッドは行を返す事があります。<br />
+	行はいくつかのプロパティとメソッド、それからフィールド名を指定する事でセルを取得する事が出来ます。<br />
+	行に対して、複製・削除等の操作を行う事が出来ます。
+</p>
+
+<h3>プロパティ</h3>
+<dl class="description">
+	<dt>datasource</dt>
+	<dd>
+		行が所属しているデータソースを取得します
+	</dd>
+
+	<dt>state</dt>
+	<dd>
+		行の状態を取得する事が出来ます。
+		<dl>
+	</dd>
+
+	<
+
+</dl>
+
+		self.state = rowState;
+	}
+	Object.keys(datasource.fields).forEach(function (name) {
+		var value = data ? data[name] : undefined;
+		self[name] = new Cell(self, name, self.state, value);
+	});
+};
+
+/**
+ * データソース
+ * @type {Datasource}
+ */
+Row.prototype.datasource = null;
+
+/**
+ * 行状態
+ * @type {Number}
+ */
+Row.prototype.state = ROW_STATE.newRow;
+
+/**
+ * コピー
+ * @return {Row}
+ */
+Row.prototype.copy = function copy() {
+	var self       = this
+	  , datasource = self.datasource
+	  , copyRow    = new Row(datasource, ROW_STATE.newRow, self);
+	datasource.rows.push(copyRow);
+	datasource.indexes.push(copyRow.rowno.get());
+	return copyRow;
+};
+
+/**
+ * 削除
+ * 新規行はクリアされる
+ * それ以外は削除フラグを追加するだけで実際にsourceから排除されるのはsaveを呼び出した時点です
+ * @return {Row}
+ */
+Row.prototype.remove = function remove() {
+	if (this.state === ROW_STATE.newRow) {
+		this.clear();
+	} else {
+		this.state = ROW_STATE.removed;
+	}
+};
+
+/**
+ * クリア
+ * 所属しているsourceから排除します
+ * 行をsourceから除外するだけでdatastoreには影響を与えません
+ * @param  {Boolean} skipRemoveIndex 通常は設定しない事。sourceのclearが実行された際に効率化の為にtrueにされます
+ */
+Row.prototype.clear = function clear(skipRemoveIndex) {
+	var self       = this
+	  , datasource = this.datasource
+	  , rowno      = this.rowno.get();
+	Object.keys(self.datasource.fields).forEach(function(name) {
+		self[name].row   = null;
+		self[name].field = null;
+	});
+	self.datasource = null;
+	if (skipRemoveIndex) {
+		//datasourceのclearを実行時はインデックスの処理はdatasourceが一気に行うのでここまでの処理で終了
+		return;
+	}
+	var idx = datasource.indexes.indexOf(rowno);
+	datasource.indexes.splice(idx, 1);
+	datasource.rows.splice(idx, 1);
+	if (rowno === datasource.currentRowNo) {
+		datasource.currentIndex = null;
+		datasource.currentRowNo = null;
+		datasource.emit('move', datasource);
+	} else if (datasource.currentRowNo) {
+		datasource.currentIndex = datasource.indexes.indexOf(datasource.currentRowNo);
+	}
+};
+
+/**
+ * リセット
+ * 編集中の値を破棄します
+ * @return {Row}
+ */
+Row.prototype.reset = function reset() {
+	var self = this;
+	Object.keys(self.datasource.fields).forEach(function(name) {
+		self[name].reset();
+	});
+	this.state = ROW_STATE.original;
+};
+
+
+/**
+ * 保存
+ * 永続化します。モデルの設定されていないデータソースに対してsaveをコールしても意味がありません。
+ * 編集中の値をOriginalに設定します
+ * @param {Object}   user
+ * @param {Function} callback ({Error} err, {Row} row)
+ */
+Row.prototype.save = function save (user, callback) {
+	var self = this;
+	if (self.datasource.model) {
+		var model = self.datasource.model;
+		switch(self.state) {
+		case ROW_STATE.newRow:
+			//追加
+			model.add(self.toModifyData(true), user, function (errs, data) {
+				if (!errs) {
+					Object.keys(data.data).forEach(function(name) {
+						if (self.datasource.fields[name]) {
+							self[name].changeOriginal(data.data[name]);
+						}
+					});
+					self.state = ROW_STATE.original
+				}
+				if (is(Function, callback)) {
+					callback(errs, self);
+				}
+			});
+			break;
+		case ROW_STATE.original:
+			//変更なし
+			if (is(Function, callback)) {
+				callback(null, self);
+			}
+			break
+		case ROW_STATE.modified:
+			//更新
+			model.update(self.rowno.get(), self.toModifyData(true), user, function (errs, data) {
+				if (!errs) {
+					Object.keys(data.data).forEach(function(name) {
+						if (self.datasource.fields[name]) {
+							self[name].changeOriginal(data.data[name]);
+						}
+					});
+					self.state = ROW_STATE.original
+				}
+				if (is(Function, callback)) {
+					callback(errs, self);
+				}
+			});
+			break;
+		case ROW_STATE.removed:
+			//削除
+			model.remove(self.rowno.get(), user, function (errs) {
+				if (!errs) {
+					self.clear();
+				}
+				if (is(Function, callback)) {
+					callback(errs, self);
+				}
+			});
+			break;
+		default:
+			if (is(Function, callback)) {
+				callback({row: new Error('壊れた行です')});
+			}
+			break;
+		}
+	} else {
+		if (is(Function, callback)) {
+			callback({row: new Error('永続化できないデータソースです')});
+		}
+	}
+};
+
+/**
+ * 行データを取得
+ * @return {JSON}
+ */
+Row.prototype.toData = function toData() {
+	var self = this
+	  , data = {rowno: self.rowno.get()};
+	Object.keys(self.datasource.fields).forEach(function(name) {
+		var field = self.datasource.fields[name]
+		  , value = field.getValue(self[name]);
+		data[name] = value;
+	});
+	return data;
+};
+
+/**
+ * 修正データを取得します
+ * @param  {Boolean} modelBind  (既定値:false) 保存可能なフィールドの値のみ取得
+ * @return {JSON}
+ */
+Row.prototype.toModifyData = function toModifyData (modelBind) {
+	var self   = this
+	  , fields = self.datasource.fields
+	  , data = {};
+	if (self.state === ROW_STATE.newRow) {
+		data.rowno = self.rowno.get();
+	}
+	var all = !modelBind;
+	Object.keys(fields).forEach(function (name) {
+		var field = fields[name];
+		if (all || field.isBind) {
+			var value = field.getModified (self[name]);
+			if (value !== undefined) {
+				data[name] = value;
+			}
+		}
+	});
+	return data;
+};
+
+/**
+ * 修正カウント
+ * 元がoriginalだった場合に使用する
+ * 修正中のフィールドの数をカウントする
+ * 1以上でROW_STATEがmodifiedに、0でoriginalになる
+ * remove状態の場合はremoveのままでになる
+ */
+Row.prototype.modifiedCount = 0;
+
+/**
+ * エラーカウント
+ * 入力値にエラーがある場合にその数をカウントする
+ * 1以上でsaveコマンドを実行出来なくなる
+ * @type {Number}
+ */
+Row.prototype.errorCount = 0;
+
+module.exports = exports = Row;

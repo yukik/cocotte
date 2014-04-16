@@ -1,0 +1,26 @@
+<h3>時刻・時間型</h3>
+
+<pre>
+時刻や時間を管理します
+  時刻：日をもたない時刻だけを管理する際に使用します
+  時間：日時と日時の間隔の計算などに使用します
+フィールド型での意味による区別はありません
+
+schema (共通)
+	fieldType: {String}         データ型     固定値: 'time' protoにて設定
+	name     : {String}         システム名   既定値: 'time' protoにて設定
+	caption  : {String}         表示名       既定値: 'time' protoにて設定
+	primary  : {Boolean}        主フィールド 既定値: false  protoにて設定
+	autoTo   : {Function}       自動設定     既定値: null   protoにて設定
+	readonly : {Boolean}        読取専用     既定値: false  protoにて設定
+	required : {Boolean}        必須         既定値: false  protoにて設定
+	defaultTo: {Number|String}  既定値       既定値: 0      protoにて設定 => 注参照
+	filterTo : {String}         条件         既定値: null   protoにて設定
+schema（個別）
+	min      : {Command|Number} 最小値      既定値: -2147483648 注参照
+	max      : {Command|Number} 最大値      既定値:  2147483647 注参照
+
+	注）Number型では固定値。String型では時間表記の場合は数値に変換、それ以外はコマンド
+
+	タイムゾーンの影響を受けません
+</pre>

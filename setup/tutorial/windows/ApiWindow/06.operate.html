@@ -1,0 +1,285 @@
+<h3>ウインドウオブジェクト</h3>
+<p>
+	ウインドウオブジェクトとは、スクリプト内でElement.getWin()にて取得出来るオブジェクトです。<br />
+	ウインドウを操作したい場合はウインドウオブジェクトのメソッドを利用してください。<br>
+	例では、メソッドチェーンにより連続して操作を行っています。
+</p>
+<pre class='code'>
+script.winOperate = function winOperate (e) {
+    var win = this.getWin();
+    if (win) {
+        win.normal()
+            .move(100, 300)
+            .move()
+            .setTitle('タイトル変更')
+            .resize(800, 800)
+            .move()
+            .resize(500, 300)
+            .move();
+    }
+};</pre>
+<p>
+	<button data-script='winOperate'>ウインドウを操作する</button><br />
+	ウインドウを取得する方法としてcocotte.Win.findメソッドを使用する方法があります。<br />
+	同じビルトイン名のウインドウを検索し最初に見つかったものを返します。
+</p>
+<pre class='code'>
+var win = cocotte.Win.find('tutorialMap');
+if (win) {
+    //ウインドウの操作
+}</pre>
+
+<h3>メソッド</h3>
+<dl class='description'>
+	<dt>show</dt>
+	<dd>
+		最小化状態のウインドウを表示します<br />
+		show()<br />
+		@return メソッドチェーン
+	</dd>
+
+	<dt>setTitle</dt>
+	<dd>
+		タイトルを変更します<br />
+		setTitle(title)<br />
+		@param {String} title<br />
+		@return メソッドチェーン
+	</dd>
+
+	<dt>active</dt>
+	<dd>
+		ウインドウを最前面に表示します
+		active()<br />
+		@return メソッドチェーン
+	</dd>
+
+	<dt>changeStatus</dt>
+	<dd>
+		ステータスのメッセージを変更します<br />
+		changeStatus(message, level)<br />
+		@param {String} message<br />
+		@param {String} level   省略時はinfo<br />
+		@return メソッドチェーン<br />
+		<br />
+		levelはメッセージのspanエレメントにクラスを付加します<br />
+		標準クラスはinfo, alert, errorです<br />
+		この操作は同期対象外です<br />
+	</dd>
+
+	<dt>toggle</dt>
+	<dd>
+		通常表示時に最大化に、最大化時に通常表示にします<br />
+		toggle()<br />
+		@return メソッドチェーン<br />
+	</dd>
+
+	<dt>normal</dt>
+	<dd>
+		通常表示にします<br />
+		normal()<br />
+		@return メソッドチェーン<br />
+	</dd>
+
+	<dt>maximize</dt>
+	<dd>
+		最大化します<br />
+		maxiimize()<br />
+		@return メソッドチェーン<br />
+	</dd>
+
+	<dt>minimize</dt>
+	<dd>
+		最小化します<br />
+		minimize()<br />
+		@return メソッドチェーン<br />
+	</dd>
+
+	<dt>close</dt>
+	<dd>
+		ウインドウを閉じます<br />
+		close()<br />
+		@return メソッドチェーン<br />
+	</dd>
+
+	<dt>showChangeBoard</dt>
+	<dd>
+		チェンジボードを表示する<br />
+		showChangeBoard()<br />
+		@return メソッドチェーン<br />
+	</dd>
+
+	<dt>showHelp</dt>
+	<dd>
+		ヘルプを表示する<br />
+		showHelp()<br />
+		@return メソッドチェーン<br />
+	</dd>
+
+	<dt>move</dt>
+	<dd>
+		移動する。<br />
+		move(top, left, calback)<br />
+		@param  {Number} top<br />
+		@param  {Number} left<br />
+		@param  {Function} callback ({Error} err, {Win} win)<br />
+		@return メソッドチェーン<br />
+		<br />
+		引数はすべて省略可能です。<br />
+		top, leftが省略された場合は、ランダムに移動します。
+	</dd>
+
+	<dt>resize</dt>
+	<dd>
+		サイズを変更する<br />
+		resize(width, height, calback)<br />
+		@param  {Number} width<br />
+		@param  {Number} height<br />
+		@param  {Function} callback ({Error} err, {Win} win)<br />
+		@return メソッドチェーン<br />
+		<br />
+		callbackは省略可能です。
+	</dd>
+
+	<dt>putIn</dt>
+	<dd>
+		ウインドウを使用しやすいように動作します。<br />
+		putIn()<br />
+		@return メソッドチェーン<br />
+		modeにより動作が次のように異なります。
+		<dl>
+			<dt>normal,dialog,dialog</dt>
+			<dd>アクティブ化、画面外にある場合は画面内に移動、画面内にある場合は微動</dd>
+			<dt>minimize</dt>
+			<dd>表示</dd>
+			<dt>maximize</dt>
+			<dd>アクティブ</dd>
+		</dl>
+	</dd>
+
+	<dt>el</dt>
+	<dd>
+		コンテンツのDOMツリーからセレクターで指定したjQueryエレメントを取得する
+		el(selector)<br />
+		@param {String} selector
+		@return {jQuery} elements
+	</dd>
+</dl>
+
+<h3>プロパティ</h3>
+<p>
+	ウインドウにはいくつかのプロパティが存在します。<br />
+	プロパティはreadonlyです。直接値を変更しないでください。<br />
+	画面との整合性がとれなくなります
+</p>
+<dl class='description'>
+	<dt>id</dt>
+	<dd>
+		ウインドウID<br />
+		String<br />
+		すべてのユーザーを通じてユニークな値で管理されます。
+	</dd>
+
+	<dt>title</dt>
+	<dd>
+		ウインドウのタイトル<br />
+		String
+	</dd>
+
+	<dt>contents</dt>
+	<dd>
+		内容オブジェクト<br />
+		cocotte.Contentsオブジェクト
+	</dd>
+
+	<dt>template</dt>
+	<dd>
+		使用テンプレート<br />
+		String
+	</dd>
+
+	<dt>position</dt>
+	<dd>
+		表示位置<br />
+		配列[top, left]
+	</dd>
+
+	<dt>size</dt>
+	<dd>
+		サイズ<br />
+		配列[width, height]
+	</dd>
+
+	<dt>resizable</dt>
+	<dd>
+		サイズ変更可能か<br />
+		Boolean
+	</dd>
+
+	<dt>opener</dt>
+	<dd>
+		オープナー<br />
+		String<br />
+		このウインドウを開いたウインドウID
+	</dd>
+
+	<dt>winEl</dt>
+	<dd>
+		ウインドウエレメント<br />
+		jQueryElements
+	</dd>
+
+	<dt>statusEl</dt>
+	<dd>
+		ステータスエレメント<br />
+		jQueryElements
+	</dd>
+
+	<dt>maximizeEl</dt>
+	<dd>
+		最大化エレメント<br />
+		jQueryElements
+	</dd>
+
+	<dt>minWinEl</dt>
+	<dd>
+		最小化ウインドウエレメント<br />
+		jQueryElements
+	</dd>
+
+	<dt>minimizeEl</dt>
+	<dd>
+		最小化エレメント<br />
+		jQueryElements
+	</dd>
+
+	<dt>closable</dt>
+	<dd>
+		イベントを使用して閉じる事が出来るか<br />
+		Boolean<br />
+		直接closeメソッドを呼び出した場合は閉じます
+	</dd>
+
+	<dt>closeEl</dt>
+	<dd>
+		閉じるエレメント<br />
+		jQueryElements
+	</dd>
+
+	<dt>helpEl</dt>
+	<dd>
+		ヘルプエレメント<br />
+		jQueryElements
+	</dd>
+
+	<dt>serverSync</dt>
+	<dd>
+		サーバ同期可能<br />
+		Boolean
+	</dd>
+
+</dl>
+
+
+
+
+

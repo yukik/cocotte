@@ -1,0 +1,16 @@
+<h3>チェック型</h3>
+
+<pre>
+ただひとつの真偽値を持ちます
+
+schema (共通)
+	fieldType: {String}  データ型      固定値: 'text' protoにて設定
+	name     : {String}  システム名    既定値: 'text' protoにて設定
+	caption  : {String}  表示名        既定値: 'text' protoにて設定
+	primary  : {Boolean} 主フィールド  既定値: false  protoにて設定 => 常にfalseです
+	autoTo   : {Function}自動設定      既定値: null   protoにて設定 => 常にnullです
+	readonly : {Boolean} 読取専用      既定値: false  protoにて設定
+	required : {Boolean} 必須          既定値: false  protoにて設定 => 常にfalseです
+	defaultTo: {String}  既定値        既定値: false  protoにて設定
+	filterTo : {String}  条件          既定値: null   protoにて設定
+</pre>

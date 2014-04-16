@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>{{ title }}</title>
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/jquery/jquery-ui.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/jquery/jquery-ui.min.css" />
+
+	<!-- cocotte -->
+	<script type="text/javascript" src="/desktop/cocotte.js"></script>
+
+	<!-- ワークスペース -->
+	<script type="text/javascript" src="/desktop/workspace.js"></script>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="/desktop/style.css" />
+
+	<!-- ハートビート -->
+	<script type="text/javascript" src="/javascripts/cocotte/heartbeat.js"></script>
+
+	<!-- ウインドウモジュール -->
+	<script type="text/javascript" src="/javascripts/cocotte/desktop/window.js"></script>
+	<script type="text/javascript" src="/javascripts/workspace/templates.js"></script>
+
+	<!-- ポートレットモジュール -->
+	<script type="text/javascript" src="/javascripts/cocotte/portlet.js"></script>
+<% portletScripts.forEach(function (js) { %>
+	<script type="text/javascript" src="/javascripts/portlet/<%= js %>.js"></script>
+<% }); %>
+<% portletCss.forEach(function (css) { %>
+	<link rel="stylesheet" href="/stylesheets/portlet/<%= css %>.css" />
+<% }); %>
+
+
+	<!-- コンテナ -->
+	<script type="text/javascript" src="/javascripts/cocotte/container.js"></script>
+
+	<!-- コンテンツ処理 -->
+	<script type="text/javascript" src="/javascripts/cocotte/contents.js"></script>
+
+	<!-- ソケット通信 -->
+	<script type="text/javascript" src="http://<%= host %>:<%= config.socketPort %>/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="/javascripts/cocotte/socket.js" ></script>
+
+	<!-- 個別ウインドウスクリプト・スタイルシート -->
+	<script type="text/javascript" src="/javascripts/cocotte/script.js"></script>
+	<script type="text/javascript" src="/javascripts/workspace/scripts.js"></script>
+<% winScripts.forEach(function (js) { %>
+	<script type="text/javascript" src="/javascripts/window/<%= js %>.js"></script>
+<% }); %>
+<% winCss.forEach(function (css) { %>
+	<link rel="stylesheet" href="/stylesheets/window/<%= css %>.css" />
+<% }); %>
+
+
+	<!-- 個別CSS -->
+	<style>
+		body {
+		  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+		  background-image: url(../images/bg2.jpg);
+		  background-size: cover;
+		}
+		#logout {
+			position: fixed;
+			bottom: 30px;
+			right : 30px;
+			z-index: 1;
+		}
+	</style>
+
+	<!-- ワークスペースの設定 -->
+	<script type="text/javascript" src="/javascripts/workspace-pc.js"></script>
+</head>
+<body>
+	<a id="logout" href="/logout">
+		<img src='/images/logout-48.png' />
+	</a>
+</body>
+</html>

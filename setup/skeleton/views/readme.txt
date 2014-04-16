@@ -1,0 +1,1 @@
+このフォルダは、config.devicesに対応したものとunknownのhtmlファイルを用意する必要があります

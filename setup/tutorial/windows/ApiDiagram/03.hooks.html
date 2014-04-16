@@ -1,0 +1,24 @@
+/**
+ *    add   : 行を追加
+ *                fn (diagram, row)
+ *    remove: 行を削除
+ *                fn (diagram, row)
+ *    move  : 現在行を移動
+ *                fn (diagram, row)
+ *    clear : 指定行のみをクリア
+ *                fn (diagram, row)
+ *    load  : 読み込んだ
+ *                fn (diagram, datasource)
+ *    save  : 保存した
+ *                fn (diagram, datasource)
+ *    clearAll: すべての行をクリア
+ *                fn (diagram, datasource)
+ *    currentChange: (フィールドを未指定) 現在行のいずれかの値が変更されたもしくは現在行が変更された
+ *                fn (diagram, row)
+ *    currentChange: (フィールドを指定) 現在行のフィールドの値が変更されたもしくは現在行が変更に伴い、現在のフィールドの値が変更された
+ *                fn (diagram, row, value)
+ *    change: (フィールドを未指定)　いずれかの値を変更
+ *                fn (diagram, row)
+ *    change: (フィールドを指定)　　指定したフィールドの値を変更
+ *                fn (diagram, row, value)
+ */
