@@ -1,0 +1,25 @@
+{
+  "name": "cocotte",
+  "description": "Business generation web application framework",
+  "homepage": "https://github.com/yukik",
+  "keywords": [
+    "cocotte",
+    "framework"
+  ],
+  "author": "Yuki Kurata <yuki.kurata@gmail.com>",
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yukik/cocotte.git"
+  },
+  "main": "index.js",
+  "version": "0.0.0",
+  "scripts": {
+    "test": "node ./test/test.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "readmeFilename": "README.md",
+  "license": "MIT"
+}
