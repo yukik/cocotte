@@ -2,14 +2,14 @@
 
 /*
  * ログアウト処理
+ *
+ * セッションを削除する
  */
 
-module.exports = exports = function () {
-	return function*() {
-		if (this.session) {
-			//セッションの削除
-			this.session.destroy();
-		}
-		this.body = yield {login: false, message: null};
-	};
+module.exports = exports = function*() {
+  if (this.session) {
+    this.session.destroy();
+  }
+  yield this.render({login: false, message: null});
 };
+

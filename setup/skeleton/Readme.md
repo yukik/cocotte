@@ -18,6 +18,7 @@ Cocotte - skeleton
 
 # ディレクトリ構成
 
+```text
  |-databases   : データベース接続情報
  |-datasources : データソース。UIとのデータバインドの対象。モデルへのバインドしてもしなくともよい
  |-diagrams    : ダイアグラム。データソースを複数参照しリレーションを管理する
@@ -30,4 +31,4 @@ Cocotte - skeleton
  |-app.js      : エントリポイント
  |-package.json: 構成情報
  |-Readme.md   : このファイル
-
+```

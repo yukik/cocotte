@@ -1,29 +1,23 @@
 // ウインドウビューを取得
 'use strict';
 
-var path = require('path')
-  , koaSend = require('koa-send');
-
+var path = require('path');
 
 // 命名規則確認
 var reg = /^[0-9a-z]{1,20}$/i;
 
-module.exports = exports = function (app) {
+module.exports = exports = function*(name, template){
 
-	return  function*(name, template){
+  var f;
 
-		var f;
+  if (reg.test(name) && reg.test(template)) {
+    f = path.join('windows', name, template + '.html');
 
-		if (reg.test(name) && reg.test(template)) {
-			f = path.join(app.root, 'windows', name, template + '.html');
+  } else {
+    f = path.join('windows', 'unkown.html');
 
-		} else {
-			f = path.join(app.root, 'windows', 'unkown.html');
+  }
 
-		}
-
-		yield koaSend(this, f);
-
-	};
+  yield this.render('window-view:' + f);
 
 };

@@ -1,17 +1,17 @@
 /*
  * データベースを初期状態に設定します
  */
-var async      = require('async')
-  , msg        = require('cocotte-message')
-  , Database   = require('cocotte-database')
-  , Model      = require('cocotte-model')
+var co = require('co')
+  , msg = require('cocotte-message')
+  , Database = require('cocotte-database')
+  , Model = require('cocotte-model')
   , Datasource = require('cocotte-datasource')
 
 	// ユーザーリスト
-  , users      = [ {name: 'admin', password: 'admin', admin: true}
-                 , {name: 'user1', password: 'user1', admin: false}
-                 , {name: 'user2', password: 'user2', admin: false}
-                 , {name: 'user3', password: 'user3', admin: false}]
+  , users = [ {name: 'admin', password: 'admin', admin: true}
+          , {name: 'user1', password: 'user1', admin: false}
+          , {name: 'user2', password: 'user2', admin: false}
+          , {name: 'user3', password: 'user3', admin: false}]
 
 	// 所属リスト
   , groups     = [ {name: 'group1'}

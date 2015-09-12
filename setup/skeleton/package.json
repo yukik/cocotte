@@ -6,7 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "cocotte"      : "*"
+    "cocotte": "*"
   },
   "readmeFilename": "Readme.md"
 }
